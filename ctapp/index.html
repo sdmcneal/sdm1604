@@ -12,6 +12,14 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
+  <script type="text/javascript">
+    function initMap() {
+      console.log("initMap()");
+    }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCesxKKqiw6C-laScj06wtAhPJQY-rs10&callback=initMap">
+    
+</script>
 
   <script src="app/app.js"></script>
   <script src="app/views/current.js"></script>
@@ -37,6 +45,7 @@
     <div ui-view></div>
 
   </div>
+  <div>Build 101</div>
 </body>
 
 </html>

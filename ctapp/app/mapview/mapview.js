@@ -10,16 +10,20 @@ app.controller('MapController', function($scope, CrumbFactory, MapFactory) {
 
     $scope.history = CrumbFactory.crumbs;
 
+    if (typeof google === 'object' && typeof google.maps === 'object') {
 
-    var _lastcoord = getLastCoordinates();
-    var _options = {
-      zoom: 8,
-      center: new google.maps.LatLng(_lastcoord.lat, _lastcoord.lng),
-      mapTypeId: google.maps.MapTypeId.TERRAIN
+
+      var _lastcoord = getLastCoordinates();
+      var _options = {
+        zoom: 8,
+        center: new google.maps.LatLng(_lastcoord.lat, _lastcoord.lng),
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+      }
+
+      $scope.map = new google.maps.Map(document.getElementById('map'), _options);
+    } else {
+      alert("Google map API not loaded");
     }
-
-    $scope.map = new google.maps.Map(document.getElementById('map'), _options);
-
 
   }
 
