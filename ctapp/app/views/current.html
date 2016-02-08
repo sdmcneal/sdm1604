@@ -1,0 +1,60 @@
+<div>
+
+
+
+  <button class="btn btn-lg btn-info" data-ng-click="getLocationUpdate()">Watch Location</button>
+
+  <button class="btn btn-lg btn-danger" data-ng-click="stopUpdate()">Stop Updates</button>
+
+  <h2>Current GPS Location</h2>
+
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Latitude</td>
+          <td>{{latitude}}</td>
+        </tr>
+        <tr>
+          <td>Longitude</td>
+          <td>{{longitude}}</td>
+        </tr>
+        <tr>
+          <td>WatchID</td>
+          <td>{{watchID}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>GPS Log</h2>
+
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Longitude</th>
+          <th>Latitude</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="crumb in history.crumbs">
+          <td>{{crumb.long}}</td>
+          <td>{{crumb.lat}}</td>
+          <td>{{crumb.date}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+</div>
+
+
+

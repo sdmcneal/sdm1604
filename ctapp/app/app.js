@@ -1,36 +1,26 @@
-var app = angular.module('CommuteTracerApp',['ngRoute','ngAnimate']);
+var app = angular.module('CommuteTracerApp', [
+    'ui.router'
+]);
 
-app.config(['$routeProvider','$locationProvider',
-function($routeProvider, $locationProvider) {
-    $routeProvider
-    .when('record', {
-        controller: 'RecordController',
-        templateUrl: 'app/partials/record.html'
-    })
-    .when('/historyList', {
-        templateUrl: 'app/partials/trail.html',
-        controller: 'RecordController'
-    })
-    .when('trail', {
-        controller: 'RecordController',
-        templateUrl: 'app/partials/trail.html'
-    })
-    .when('Track/commands', {
-        controller: 'CommandCtrl',
-        templateUrl: 'app/partials/commands.html'
-    })
-    .otherwise({
-        redirectTo: '/CommuteTracerApp.html'
-    });
-}]);
-
-app.controller('MainCtrl', ['$route', '$routeParams', '$location',
-    function($route, $routeParams, $location) {
-      this.$route = $route;
-      this.$location = $location;
-      this.$routeParams = $routeParams;
-  }]);
-
-app.controller('CommandCtrl',function() {
-    this.name = "CommandCtrl";
+app.config(
+    function($stateProvider, $urlRouterProvider) {
+        
+        $urlRouterProvider.otherwise('/home');
+        
+        $stateProvider
+        .state('home', {
+            url: '/home',
+            templateUrl: 'app/partials/home.html'
+        })
+        .state('current', {
+            url: '/current',
+            controller: 'WatchController',
+            templateUrl: 'app/views/current.html'
+        })
+        .state('map', {
+            url: '/map',
+            controller: 'MapController',
+            templateUrl: 'app/mapview/mapview.html'
+        });
+    
 });

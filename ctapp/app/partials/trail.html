@@ -1,7 +1,7 @@
 <div>
     <h1>Trail</h1>
     <button data-ng-click="recordLocation()">Record Location</button>
-    records={{crumbs.length}}
+    records={{data.crumbs.length}}
     <div class="container">
         <table class="table table-striped">
             <thead>
@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="crumb in crumbs">
+                <tr ng-repeat="crumb in data.crumbs">
                     <td>{{crumb.long}}</td>
                     <td>{{crumb.lat}}</td>
                     <td>{{crumb.date}}</td>

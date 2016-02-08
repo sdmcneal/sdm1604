@@ -1,12 +1,9 @@
-app.controller('RecordController', function($scope,$location,$routeParams) {
+app.controller('RecordController', function($scope,$location,$routeParams,CrumbFactory) {
   init();
 
   function init() {
     console.log("init()");
-    $scope.user = 99;
-    $scope.trip = 88;
-    $scope.route = 77;
-    $scope.crumbs = [];
+    $scope.data = CrumbFactory.data;
     $scope.verbose = true;
   }
 
@@ -25,11 +22,11 @@ app.controller('RecordController', function($scope,$location,$routeParams) {
           date: "now"
         };
 
-        $scope.crumbs.push(new_crumb);
+        $scope.data.crumbs.push(new_crumb);
 
         $scope.$apply();
         
-        if ($scope.verbose) console.log("crumbs.length="+$scope.crumbs.length);
+        if ($scope.verbose) console.log("crumbs.length="+$scope.data.crumbs.length);
 
       })
     } else {

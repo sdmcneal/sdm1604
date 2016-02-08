@@ -13,19 +13,18 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
 
   <script src="app/app.js"></script>
+  <script src="app/views/current.js"></script>
+  <script src="app/mapview/mapview.js"></script>
+  <script src="app/factories/factories.js"></script>
   <script src="app/controllers/controllers.js"></script>
 
 </head>
 
 <body>
   <div ng-app="CommuteTracerApp">
-    <div data-ng-controller="RecordController">
-
-      <button data-ng-click="showHistoryTable('/historyList')">Show History</button>
-      <div ng-view="historytable"></div>
-    </div>
-
-
+    <a href="/Current">Current GPS Location</a>
+    <a href="/Map">Map</a>
+    <div ng-view></div>
 
   </div>
 </body>
