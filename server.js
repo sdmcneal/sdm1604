@@ -7,7 +7,7 @@ var http = require('http');
 var path = require('path');
 var async = require('async');
 var express = require('express');
-
+var verbose = true;
 //
 // ## SimpleServer `SimpleServer(obj)`
 //
@@ -25,7 +25,8 @@ router.get('/api/gettrack/:id', function(req,res) {
 });
 router.post('/api/recordtrack', function(req,res) {
   // tested with curl -d '{"key":"value"}' -H "Content-Type: application/json" http://127.0.0.1:8080/api/recordtrack
-  res.send('submission = '+req.body.key);
+  if (verbose) console.log('received /api/recordtrack: '+JSON.stringify(req.body));
+  res.send('submission received');
 })
 router.use(express.static(path.resolve(__dirname, 'ctapp')));
 
