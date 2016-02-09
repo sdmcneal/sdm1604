@@ -17,6 +17,12 @@ var express = require('express');
 var router = express();
 var server = http.createServer(router);
 
+router.use(express.bodyParser());
+router.get('/api/gettrack/:id', function(req,res) {
+  var _id = req.params.id;
+  
+  res.send('/api/gettrack/id:'+_id);
+});
 router.use(express.static(path.resolve(__dirname, 'ctapp')));
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
