@@ -23,6 +23,10 @@ router.get('/api/gettrack/:id', function(req,res) {
   
   res.send('/api/gettrack/id:'+_id);
 });
+router.post('/api/recordtrack', function(req,res) {
+  // tested with curl -d '{"key":"value"}' -H "Content-Type: application/json" http://127.0.0.1:8080/api/recordtrack
+  res.send('submission = '+req.body.key);
+})
 router.use(express.static(path.resolve(__dirname, 'ctapp')));
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
