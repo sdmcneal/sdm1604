@@ -17,6 +17,11 @@ app.config(
             controller: 'WatchController',
             templateUrl: 'app/views/current.html'
         })
+        .state('fsmain', {
+            url: '/fsmain',
+            controller: 'FSMainController',
+            templateUrl: 'app/views/fsmain.html'
+        })
         .state('map', {
             url: '/map',
             controller: 'MapController',

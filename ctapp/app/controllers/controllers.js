@@ -43,4 +43,5 @@ app.controller('RecordController', function($scope,$location,$routeParams,CrumbF
     console.log("latitude:" + pos.coords.latitude 
     + ", longitude: " + pos.coords.longitude);
   }
-})
+});
+

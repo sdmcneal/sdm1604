@@ -32,7 +32,7 @@ app.controller('WatchController', function($scope, $http, CrumbFactory) {
       this.intervalId = setInterval(function() {
         recordLastLocation();
         if ($scope.verbose) console.log("saving last location");
-      }, 5000);
+      }, 60000);
 
       $scope.geoLocation = navigator.geolocation;
 
