@@ -1,6 +1,28 @@
 <div>
     <h2>FS Model:</h2>
-    <code>{{getUserJSON()}}</code>
+    
     <h2>Run the schedule</h2>
     <code>{{generateSchedule()}}</code>
+    <h1>Checking ledger</h1>
+    
+    <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Journey Entry ID</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="je in getLedger(2000)">
+          <td>{{je.journal_entry_id}}</td>
+          <td>{{je.journal_entry_date | date}}</td>
+          <td>{{je.amount}}</td>
+          <td>{{je.balance}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
