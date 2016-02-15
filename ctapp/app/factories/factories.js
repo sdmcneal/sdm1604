@@ -126,17 +126,76 @@ function ScheduleEntry(id, catalog_entry_id, schedule_date, account_id, amount,
   }
 }
 
+app.factory('LedgerFactory',function(ConstantsFactory) {
+  var verbose = true;
+  var ledgers = new Map();
+  var account_ids = [];
+  var service = {};
+  var next_journey_entry_id;
+
+  init();
+
+  function init() {
+    if (verbose) console.log('LedgerFactory.init()');
+    next_journey_entry_id = ConstantsFactory.FIRST_JOURNEY_ENTRY_ID;
+  }
+
+  service.addLedger = function(account_id) {
+    if (verbose) console.log('LedgerFactory.addLedger()');
+    ledgers.set(account_id,[]);
+
+    account_ids.push(account_id);
+  };
+
+  service.addJournalEntry = function(account_id,journal_entry_date,
+  schedule_entry_id, description, amount) {
+    if (verbose) console.log('LedgerFactory.addJournalEntry()');
+
+    var new_journal_entry = {
+      journal_entry_id: next_journey_entry_id++,
+      journal_entry_date: journal_entry_date,
+      schedule_entry_id: schedule_entry_id,
+      description: description,
+      amount: amount
+    };
+
+    var ledger = service.getLedger(account_id);
+    var last_balance = 0.0;
+
+    if (ledger.size>0) {
+      last_balance = ledger[ledger.size-1].balance;
+    }
+
+    new_journal_entry.balance = last_balance + amount;
+
+    ledger.push(new_journal_entry);
+
+    return new_journal_entry.journal_entry_id;
+  };
+
+  service.getLedgerCount = function() { return ledgers.size; };
+
+  service.getLedger = function(account_id) { return ledgers.get(account_id); };
+
+  service.account_list = account_ids;
+
+  return service;
+});
+
 app.factory('ScheduleFactory',function(ConstantsFactory) {
   var verbose = true;
   var schedule_entries = [];
   var service = {};
   var next_schedule_entry_id;
+  var range_start_date, range_end_date;
   
   init();
   
   function init() {
     if (verbose) console.log('ScheduleFactory.init()');
     next_schedule_entry_id = ConstantsFactory.FIRST_SCHEDULE_ENTRY_ID;
+    range_start_date = ConstantsFactory.DEFAULT_RANGE_START;
+    range_end_date = ConstantsFactory.DEFAULT_RANGE_END;
   }
   
   service.addScheduleEntry = function(catalog_entry_id,schedule_date,
@@ -160,6 +219,9 @@ app.factory('ScheduleFactory',function(ConstantsFactory) {
   };
   service.getScheduleEntryCount = function() { return schedule_entries.length; };
   service.getScheduleEntries = function() { return schedule_entries; };
+  service.setRangeStartDate = function(start_date) { range_start_date = start_date; };
+  service.setRangeEndDate = function(end_date) { range_end_date = end_date; };
+
   
   return service;
 });
@@ -240,15 +302,38 @@ app.factory('ConstantsFactory', function() {
     constants.FIRST_ACCOUNT_ID = 20000;
     constants.FIRST_CATALOG_ENTRY_ID = 30000;
     constants.FIRST_SCHEDULE_ENTRY_ID = 40000;
+    constants.FIRST_JOURNEY_ENTRY_ID = 50000;
     
     constants.FREQ_MONTHLY = "monthly";
     
     constants.FIXED = "fixed";
+
+    constants.DEFAULT_RANGE_START = new Date(2016,1,1);
+    constants.DEFAULT_RANGE_END = new Date(2016,7,1);
+
+    constants.OPENING_BALANCE = "Opening Balance";
   }
 
   return constants;
 });
+app.factory('CalculationEngine',function(ConstantsFactory) {
+  var verbose = true;
+  var service = {};
 
+  init();
+
+  function init() {
+    if (verbose)console.log('CalculationEngine.init()');
+  }
+
+  service.calculateMonthlyScheduleDate = function(day_of_month,catalog_entry_start_date,
+  catalog_entry_end_date) {
+
+
+  };
+
+  return service;
+});
 app.factory('CatalogFactory', function(ScheduleFactory, ConstantsFactory) {
   var verbose = true;
   var catalog_entries = [];
@@ -305,16 +390,16 @@ app.factory('CatalogFactory', function(ScheduleFactory, ConstantsFactory) {
 
   service.getCatalogEntryCount = function() {
     return catalog_entries.length;
-  }
+  };
 
   service.getCatalogEntries = function() {
     return catalog_entries;
-  }
+  };
 
   return service;
 });
 
-app.factory('AccountFactory', function(ConstantsFactory) {
+app.factory('AccountFactory', function(ConstantsFactory,LedgerFactory) {
   var verbose = true;
   var accounts = [];
   var service = {};
@@ -340,16 +425,22 @@ app.factory('AccountFactory', function(ConstantsFactory) {
 
     accounts.push(new_account);
 
+    LedgerFactory.addLedger(new_account.account_id);
+
+    // add initial balance
+    LedgerFactory.addJournalEntry(new_account.account_id,balance_date,null,
+    ConstantsFactory.OPENING_BALANCE,balance);
+
     return new_account.account_id;
-  }
+  };
 
   service.getAccountCount = function() {
     return accounts.length;
-  }
+  };
 
   service.getAccountList = function() {
     return accounts;
-  }
+  };
 
   return service;
 });
@@ -378,15 +469,15 @@ app.factory('UserFactory', function(ConstantsFactory) {
     users.push(new_user);
 
     return new_user.user_id;
-  }
+  };
 
   service.getUserCount = function() {
     return users.length;
-  }
+  };
 
   service.getUserList = function() {
     return users;
-  }
+  };
 
   return service;
 
