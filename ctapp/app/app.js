@@ -22,6 +22,16 @@ app.config(
             controller: 'FSMainController',
             templateUrl: 'app/views/fsmain.html'
         })
+        .state('catalog', {
+            url: '/catalog',
+            controller: 'CatalogController',
+            templateUrl: 'app/views/catalog.html'
+        })
+        .state('schedule', {
+            url: '/schedule',
+            controller: 'ScheduleController',
+            templateUrl: 'app/views/schedule.html'
+        })
         .state('map', {
             url: '/map',
             controller: 'MapController',

@@ -1,0 +1,26 @@
+<div>
+    <h2>Schedule Entries:</h2>
+  <code>entry count = {{schedule_entry_count}}</code>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Schedule ID</th>
+          <th>Date</th>
+          <th>Account ID</th>
+          <th>Amount</th>
+          <th>Amount Calc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="u in schedule_entries">
+          <td>{{u.schedule_entry_id}}</td>
+          <td>{{u.schedule_date | date}}</td>
+          <td>{{u.account_id}}</td>
+          <td>{{u.amount | currency }}</td>
+          <td>{{u.amount_calc }}</td>
+      </tbody>
+    </table>
+  </div>
+</div>
+

@@ -1,0 +1,26 @@
+<div>
+    <h2>Catalog Entries:</h2>
+  <code>entry count = {{catalogEntryCount}}</code>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Account ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Balance</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="u in catalogEntries">
+          <td>{{u.catalog_entry_id}}</td>
+          <td>{{u.description}}</td>
+          <td>{{u.catalog_entry_type}}</td>
+          <td>{{u.amount | currency }}</td>
+          <td>{{u.start_date | date}}</td>
+      </tbody>
+    </table>
+  </div>
+</div>
+

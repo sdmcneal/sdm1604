@@ -1,11 +1,51 @@
 <div>
-    <h2>FS Model:</h2>
-    
-    <h2>Run the schedule</h2>
-    <code>{{generateSchedule()}}</code>
-    <h1>Checking ledger</h1>
-    
-    <div class="container">
+  <h2>Users:</h2>
+  <code>user count = {{user_count}}</code>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="u in user_list">
+          <td>{{u.user_id}}</td>
+          <td>{{u.name}}</td>
+      </tbody>
+    </table>
+  </div>
+  
+  <h2>Accounts:</h2>
+  <code>account count = {{account_count}}</code>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Account ID</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Balance</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="u in account_list">
+          <td>{{u.account_id}}</td>
+          <td>{{u.name}}</td>
+          <td>{{u.type}}</td>
+          <td>{{u.balance | currency }}</td>
+          <td>{{u.balance_date | date}}</td>
+      </tbody>
+    </table>
+  </div>
+  
+  <h2>Run the schedule</h2>
+  <code>generateSchedule()</code>
+  <h1>Checking ledger</h1>
+
+  <div class="container">
     <table class="table table-striped">
       <thead>
         <tr>
@@ -15,14 +55,14 @@
           <th>Balance</th>
         </tr>
       </thead>
-      <tbody>
-        <tr ng-repeat="je in getLedger(2000)">
-          <td>{{je.journal_entry_id}}</td>
-          <td>{{je.journal_entry_date | date}}</td>
-          <td>{{je.amount}}</td>
-          <td>{{je.balance}}</td>
-        </tr>
-      </tbody>
+      <!--<tbody>-->
+      <!--  <tr ng-repeat="je in getLedger(2000)">-->
+      <!--    <td>{{je.journal_entry_id}}</td>-->
+      <!--    <td>{{je.journal_entry_date | date}}</td>-->
+      <!--    <td>{{je.amount}}</td>-->
+      <!--    <td>{{je.balance}}</td>-->
+      <!--  </tr>-->
+      <!--</tbody>-->
     </table>
   </div>
 </div>
