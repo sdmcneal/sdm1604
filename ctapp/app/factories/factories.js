@@ -379,7 +379,7 @@ app.factory('CalculationEngine', function (ConstantsFactory) {
     // every x weeks
     // weekly
     // biweekly
-    
+
     service.calculateLastDayOfMonths = function(catalog_entry_start_date,
     catalog_entry_end_date,ledger_balance_date) {
         if (verbose) console.log('CalculationEngine.calculateLastDayOfMonths()');
