@@ -1,0 +1,29 @@
+<div>
+    <h1>Ledgers:</h1>
+    <code>entry count = {{accounts.length}}</code>
+
+    <div ng-repeat="account_id in accounts">
+        <h2>Account: {{account_id}} </h2>
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>JE ID</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="u in getLedger(account_id)">
+                    <td>{{u.journal_entry_id}}</td>
+                    <td>{{u.journal_entry_date | date}}</td>
+                    <td>{{u.description}}</td>
+                    <td>{{u.amount | currency }}</td>
+                    <td>{{u.balance | currency }}</td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

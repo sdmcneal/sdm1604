@@ -32,6 +32,11 @@ app.config(
             controller: 'ScheduleController',
             templateUrl: 'app/views/schedule.html'
         })
+            .state('ledger', {
+                url: '/ledger',
+                controller: 'LedgerController',
+                templateUrl: 'app/views/ledger.html'
+            })
         .state('map', {
             url: '/map',
             controller: 'MapController',
