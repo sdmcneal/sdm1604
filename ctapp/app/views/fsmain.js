@@ -1,4 +1,4 @@
-app.controller('FSMainController', function($scope, FSUser, UserFactory,
+app.controller('FSMainController', function($scope, UserFactory,
   AccountFactory, CatalogFactory, ScheduleFactory, ConstantsFactory) {
   var fsuser;
   var verbose = true;
@@ -8,9 +8,6 @@ app.controller('FSMainController', function($scope, FSUser, UserFactory,
 
   function init() {
     if (verbose) console.log("FSMainController::init()");
-    fsuser = FSUser.user;
-    fsuser.mockdata();
-    fsuser.models[0].setupAccounts(fsuser.accounts);
 
     // new refactor (starting build 20)
     UserFactory.addUser("John");
