@@ -1,5 +1,7 @@
+'use strict';
+
 var app = angular.module('CommuteTracerApp', [
-    'ui.router'
+    'fsApp.common.models','ui.router'
 ]);
 
 app.config(
