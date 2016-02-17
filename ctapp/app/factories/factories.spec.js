@@ -76,6 +76,18 @@ describe("Common models", function () {
 
             expect(calculation_engine.addXWeeksTo(7,d1)).toEqual(e1);
         });
+        it("add 1 month", function () {
+            var d1 = new Date(2016,0,13);
+            var e1 = new Date(2016,1,13);
+
+            expect(calculation_engine.addXMonthsTo(1,d1)).toEqual(e1);
+        });
+        it("add 3 months over year end point", function () {
+            var d1 = new Date(2016,11,13);
+            var e1 = new Date(2017,2,13);
+
+            expect(calculation_engine.addXMonthsTo(3,d1)).toEqual(e1);
+        });
     });
 
 });
