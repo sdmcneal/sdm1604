@@ -1,0 +1,25 @@
+<div>
+    <h2>Accounts:</h2>
+    <code>account count = {{account_count}}</code>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Balance</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="u in account_list">
+                <td>{{u.account_id}}</td>
+                <td>{{u.name}}</td>
+                <td>{{u.type}}</td>
+                <td>{{u.balance | currency }}</td>
+                <td>{{u.balance_date | date}}</td>
+            </tbody>
+        </table>
+    </div>
+</div>
