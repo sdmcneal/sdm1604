@@ -1,8 +1,0 @@
-   37  karma start
-   40  karma start
-   45  karma start
-   47  karma --help
-   48  karma start karma.c9.conf.js 
-   49  npm install karma-phantomjs-launcher
-   51  karma start karma.c9.conf.js 
-   52  history | grep karma > ctapp/docs/karma_install_history.txt
