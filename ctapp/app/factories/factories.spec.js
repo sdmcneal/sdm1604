@@ -1,18 +1,12 @@
 describe("fsApp.common.models::LedgerFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
-    //var constants_factory = {
-    //    FIRST_ACCOUNT_ID: 10000
-    //};
-
-    beforeEach(inject(function (ConstantsFactory) {
-        constants_factory = ConstantsFactory;
-
-    }));
+    var constants_factory;
     var ledger_factory;
 
     beforeEach(inject(function ($injector) {
         //beforeEach(module('fsApp.common.models'));
+        constants_factory = $injector.get('ConstantsFactory');
         ledger_factory = $injector.get('LedgerFactory');
     }));
 
@@ -23,7 +17,7 @@ describe("fsApp.common.models::LedgerFactory", function () {
     });
 
     describe("add new account, ledger, and opening balance", function () {
-        var balance_date, checking_id, account_count, first_account, ledger_count, ledger;
+        var balance_date, checking_id, account_count, first_account, ledger_count, journal_entries;
 
         beforeAll(function () {
             console.log('beforeAll()');
@@ -32,7 +26,8 @@ describe("fsApp.common.models::LedgerFactory", function () {
             account_count = ledger_factory.getAccountCount();
             first_account = ledger_factory.getAccountList()[0];
             ledger_count = ledger_factory.getLedgerCount();
-            ledger = ledger_factory.getLedger(checking_id);
+            journal_entries = ledger_factory.getJournalEntries(checking_id);
+            console.log('ledger_count: '+ledger_count);
 
         });
         it("successfully adds new account", function () {
@@ -41,19 +36,22 @@ describe("fsApp.common.models::LedgerFactory", function () {
             expect(first_account.name).toEqual("Checking");
             expect(first_account.balance).toEqual(1000.0);
             expect(first_account.balance_date).toEqual(balance_date);
+            console.log('ledger_count: '+ledger_count);
+            console.log('first journal: '+JSON.stringify(journal_entries[0]));
         });
         it("successfully add new ledger and JE", function () {
             expect(ledger_count).toEqual(1);
-            expect(ledger.journal_entry_id).toEqual(constants_factory.FIRST_JOURNAL_ENTRY_ID);
-            expect(ledger.journal_entry_date).toEqual(balance_date);
-            expect(ledger.description).toEqual(constants_factory.OPENING_BALANCE);
-            expect(ledger.amount).toEqual(1000.0);
+            expect(journal_entries[0].journal_entry_id).toEqual(constants_factory.FIRST_JOURNAL_ENTRY_ID);
+            expect(journal_entries[0].journal_entry_date).toEqual(balance_date);
+            expect(journal_entries[0].description).toEqual(constants_factory.OPENING_BALANCE);
+            expect(journal_entries[0].amount).toEqual(1000.0);
+            console.log('ledger_count: '+ledger_count);
         })
     });
 
 });
 
-describe("Common models", function () {
+xdescribe("Common models", function () {
     beforeEach(function () {
         module('fsApp.common.models');
     });
