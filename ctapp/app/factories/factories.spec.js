@@ -51,7 +51,7 @@ describe("fsApp.common.models::LedgerFactory", function () {
 
 });
 
-xdescribe("Common models", function () {
+describe("Common models", function () {
     beforeEach(function () {
         module('fsApp.common.models');
     });

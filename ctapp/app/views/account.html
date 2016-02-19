@@ -1,6 +1,6 @@
 <div>
     <h2>Accounts:</h2>
-    <code>account count = {{account_count}}</code>
+    <code>account count = {{getAccountCount()}}</code>
     <div class="container">
         <table class="table table-striped">
             <thead>
@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="u in account_list">
+            <tr ng-repeat="u in accounts">
                 <td>{{u.account_id}}</td>
                 <td>{{u.name}}</td>
                 <td>{{u.type}}</td>
@@ -22,4 +22,13 @@
             </tbody>
         </table>
     </div>
+    <h2>Add Account</h2>
+    <form novalidate class="form-group">
+        Name: <input type="text" class="form-control" ng-model="account_form.name" required><br />
+        Type: <input type="text" class="form-control" ng-model="account_form.type" required><br />
+        Balance: <input  class="form-control" type="text" ng-model="account_form.balance" required><br />
+        Balance Date: <input  class="form-control" type="date" ng-model="account_form.balance_date" required><br />
+        <button class="btn btn-primary" type="submit" ng-click="createAccount()">Create Account<br />
+        
+    </form>
 </div>

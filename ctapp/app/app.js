@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module('CommuteTracerApp', [
-    'fsApp.common.models','ui.router'
+    'fsApp.common.models','fsApp.views.ledger','ui.router'
 ]);
 
 app.config(
@@ -38,6 +38,11 @@ app.config(
                 url: '/ledger',
                 controller: 'LedgerController',
                 templateUrl: 'app/views/ledger.html'
+            })
+            .state('account', {
+                url: '/account',
+                controller: 'AccountCtrl',
+                templateUrl: 'app/views/account.html'
             })
         .state('map', {
             url: '/map',
