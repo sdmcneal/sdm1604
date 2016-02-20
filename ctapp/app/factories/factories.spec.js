@@ -1,4 +1,4 @@
-describe("fsApp.common.models::CatalogFactory", function () {
+xdescribe("fsApp.common.models::CatalogFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
@@ -188,7 +188,7 @@ describe("Common models", function () {
             expect(calculation_engine.addXMonthsTo(3, d1)).toEqual(e1);
         });
     });
-    describe("monthly schedule calculation", function () {
+    xdescribe("monthly schedule calculation", function () {
         it("schedule monthly", function () {
             var schedule = calculation_engine.calculateMonthlyScheduleDate(11, new Date(2016, 0, 11),
                 new Date(2016, 9, 12), new Date(2016, 0, 5));
@@ -196,6 +196,32 @@ describe("Common models", function () {
             expect(schedule[0]).toEqual(new Date(2016,0,11));
             expect(schedule.length).toEqual(10);
             expect(schedule[schedule.length - 1]).toEqual(new Date(2016, 9, 11));
-        })
-    })
+        });
+
+    });
+    describe("schedule to ledger",function() {
+        var schedule_factory, ledger_factory;
+        beforeEach(inject(function($injector){
+            schedule_factory = $injector.get('ScheduleFactory');
+            ledger_factory = $injector.get('LedgerFactory');
+
+        }));
+        it("factories defined", function() {
+            expect(schedule_factory).toBeDefined();
+            expect(ledger_factory).toBeDefined();
+        });
+        it("schedule fixed catalog entry and open balance", function() {
+           var account = ledger_factory.addAccount("Checking","Cash",1000.0, new Date(2016,1,14));
+            expect(account).toBeDefined();
+
+            var ledger = ledger_factory.getJournalEntries(account);
+            expect(ledger.length).toEqual(1);
+
+            var je = ledger[0];
+            expect(je.balance).toEqual(1000.0);
+            
+            var schedule_id = schedule_factory.addScheduleEntry(constants_factory.FIXED,1000,new Date(2016,1,15),
+            account,-75.0,null);
+        });
+    });
 });

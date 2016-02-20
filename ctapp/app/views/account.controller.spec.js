@@ -1,4 +1,4 @@
-describe('AccountCtrl', function() {
+xdescribe('AccountCtrl', function() {
     beforeEach(module('fsApp.views.ledger'));
     
     var $controller;

@@ -96,7 +96,7 @@ angular.module('fsApp.common.models', [])
             var ledger = service.getJournalEntries(account_id);
             var last_balance = 0.0;
 
-            if (ledger.size > 0) {
+            if (ledger.length > 0) {
                 last_balance = ledger[ledger.size - 1].balance;
             }
 
@@ -135,7 +135,7 @@ angular.module('fsApp.common.models', [])
         return service;
     })
 
-    .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine) {
+    .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine,LedgerFactory) {
         var verbose = true;
         var schedule_entries = [];
         var service = {};
@@ -151,6 +151,20 @@ angular.module('fsApp.common.models', [])
             range_end_date = ConstantsFactory.DEFAULT_RANGE_END;
         }
 
+        service.runSchedule = function() {
+            if (0<schedule_entries.length) {
+                schedule_entries.sort(function(a,b) {
+                    return (a.schedule_date - b.schedule_date);
+                });
+                schedule_entries.forEach(function(entry) {
+                    switch (entry.catalog_entry_type) {
+                        case ConstantsFactory.FIXED:
+                            LedgerFactory.addJournalEntry(entry.account_id,entry.schedule_entry_id,entry.description,
+                            entry.amount);
+                    }
+                });
+            }
+        };
         service.addScheduleEntry = function (catalog_entry_type,catalog_entry_id, schedule_date,
                                              account_id, amount, amount_calc) {
 
@@ -208,6 +222,7 @@ angular.module('fsApp.common.models', [])
                 case ConstantsFactory.FIXED:
                     if (verbose) console.log('generate fixed monthly');
                     service.saveFixedSchedule(schedule,catalog_entry);
+                    service.runSchedule(); // TODO: delete this
                     break;
             }
         };
