@@ -1,32 +1,62 @@
 app.controller('FSMainController', function($scope, UserFactory,
-  AccountFactory, CatalogFactory, ScheduleFactory, ConstantsFactory) {
+  LedgerFactory, CatalogFactory, ScheduleFactory, ConstantsFactory) {
   var fsuser;
-  var verbose = true;
+  var verbose = 3;
 
   init();
 
 
   function init() {
-    if (verbose) console.log("FSMainController::init()");
+    if (verbose>=2) console.log("FSMainController::init()");
 
-    // new refactor (starting build 20)
-    UserFactory.addUser("John");
-
-    //var checking_id = AccountFactory.addAccount("Checking", "Liquid", 1000.0, new Date());
-    //var savings_id = AccountFactory.addAccount("Savings", "Liquid", 1000.0, new Date());
-    //var federal_id = AccountFactory.addAccount("Federal Tax", "Report", 0.0, new Date(2016, 0, 1));
-    //
-    //var paycheck_id = CatalogFactory.addCatalogEntry("Gross Paycheck", null,
-    //  ConstantsFactory.FIXED, checking_id, null, null, null, 10000.0,
     //  ConstantsFactory.FREQ_MONTHLY, 1, null, null, null);
       
   }
+  $scope.createMocks = function () {
+    if (verbose>=2) console.log("FSMainController::createMocks()");
+    
+    // new refactor (starting build 20)
+    UserFactory.addUser("John");
+
+    var checking_id = LedgerFactory.addAccount("Checking", "Liquid", 1000.0, new Date());
+    var savings_id = LedgerFactory.addAccount("Savings", "Liquid", 1000.0, new Date());
+    var federal_id = LedgerFactory.addAccount("Federal Tax", "Report", 0.0, new Date(2016, 0, 1));
+    
+    var catalog_entry1 = {
+                frequency: ConstantsFactory.FREQ_MONTHLY,
+                frequency_param: 15,
+                catalog_entry_type: ConstantsFactory.FIXED,
+                catalog_entry_id: 1201,
+                amount: -76.0,
+                amount_calc: 0.0,
+                account_id: checking_id,
+                description: 'HOA',
+                start_date: new Date(2016, 1, 12),
+                end_date: new Date(2016, 6, 15)
+            };
+    var paycheck_id = CatalogFactory.addCatalogEntry(catalog_entry1);
+    
+    var catalog_entry2 = {
+                frequency: ConstantsFactory.FREQ_FIRST_WEEKDAY_OF_MONTH,
+                frequency_param: 15,
+                catalog_entry_type: ConstantsFactory.FIXED,
+                catalog_entry_id: 1201,
+                amount: 5000.0,
+                amount_calc: 0.0,
+                account_id: checking_id,
+                description: 'Gross Paycheck',
+                start_date: new Date(2016, 1, 12),
+                end_date: new Date(2016, 6, 15)
+            };
+    var paycheck_id = CatalogFactory.addCatalogEntry(catalog_entry2);
+    
+  };
 
   $scope.user_count = UserFactory.getUserCount();
   $scope.user_list = UserFactory.getUserList();
 
-  $scope.account_count = AccountFactory.getAccountCount();
-  $scope.account_list = AccountFactory.getAccountList();
+  $scope.account_count = LedgerFactory.getAccountCount();
+  $scope.account_list = LedgerFactory.getAccountList();
 
   $scope.getUserJSON = function() {
     return fsuser.getJSON();
