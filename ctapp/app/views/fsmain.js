@@ -12,13 +12,13 @@ app.controller('FSMainController', function($scope, UserFactory,
     // new refactor (starting build 20)
     UserFactory.addUser("John");
 
-    var checking_id = AccountFactory.addAccount("Checking", "Liquid", 1000.0, new Date());
-    var savings_id = AccountFactory.addAccount("Savings", "Liquid", 1000.0, new Date());
-    var federal_id = AccountFactory.addAccount("Federal Tax", "Report", 0.0, new Date(2016, 0, 1));
-
-    var paycheck_id = CatalogFactory.addCatalogEntry("Gross Paycheck", null,
-      ConstantsFactory.FIXED, checking_id, null, null, null, 10000.0,
-      ConstantsFactory.FREQ_MONTHLY, 1, null, null, null);
+    //var checking_id = AccountFactory.addAccount("Checking", "Liquid", 1000.0, new Date());
+    //var savings_id = AccountFactory.addAccount("Savings", "Liquid", 1000.0, new Date());
+    //var federal_id = AccountFactory.addAccount("Federal Tax", "Report", 0.0, new Date(2016, 0, 1));
+    //
+    //var paycheck_id = CatalogFactory.addCatalogEntry("Gross Paycheck", null,
+    //  ConstantsFactory.FIXED, checking_id, null, null, null, 10000.0,
+    //  ConstantsFactory.FREQ_MONTHLY, 1, null, null, null);
       
   }
 

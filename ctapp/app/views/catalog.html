@@ -1,26 +1,54 @@
 <div>
+    <h2>Create Catalog Entry</h2>
+    <div>
+        <form class="form-group">
+            Description: <input type="text" class="form-control" ng-model="catalog_form.description" required>
+            Type:
+            <select class="form-control" ng-model="catalog_form.catalog_entry_type">
+                <option ng-repeat="option in type_options" value="{{option}}">{{option}}</option>
+            </select>
+            Frequency:
+            <select class="form-control" ng-model="catalog_form.frequency">
+                <option ng-repeat="option in frequency_options" value="{{option}}">{{option}}</option>
+            </select>
+            Frequency Parameter:
+            Amount: <input type="number" class="form-control" ng-model="catalog_form.frequency_param" required>
+            Account:
+            <select class="form-control" ng-model="catalog_form.account_id">
+                <option ng-repeat="option in account_options" value="{{option.account_id}}">{{option.name}}</option>
+            </select>
+            Paired Account (only with certain types):
+            <select class="form-control" ng-model="catalog_form.paired_account_id">
+                <option ng-repeat="option in account_options" value="{{option.account_id}}">{{option.name}}</option>
+            </select>
+            Start Date: <input type="date" class="form-control" ng-model="catalog_form.start_date" required>
+            End Date: <input type="date" class="form-control" ng-model="catalog_form.end_date" required>
+            Amount: <input type="number" class="form-control" ng-model="catalog_form.amount" required>
+            <button class="btn btn-primary" type="submit" ng-click="createCatalogEntry()">Create Catalog Entry<br />
+        </form>
+    </div>
     <h2>Catalog Entries:</h2>
-  <code>entry count = {{catalogEntryCount}}</code>
-  <div class="container">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Account ID</th>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Balance</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="u in catalogEntries">
-          <td>{{u.catalog_entry_id}}</td>
-          <td>{{u.description}}</td>
-          <td>{{u.catalog_entry_type}}</td>
-          <td>{{u.amount | currency }}</td>
-          <td>{{u.start_date | date}}</td>
-      </tbody>
-    </table>
-  </div>
+    <code>entry count = {{catalogEntryCount}}</code>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="u in catalogEntries">
+                <td>{{u.catalog_entry_id}}</td>
+                <td>{{u.description}}</td>
+                <td>{{u.catalog_entry_type}}</td>
+                <td>{{u.amount | currency }}</td>
+                <td>{{u.start_date | date}}</td>
+            </tbody>
+        </table>
+    </div>
 </div>
 

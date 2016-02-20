@@ -1,4 +1,50 @@
-describe("fsApp.common.models::LedgerFactory", function () {
+describe("fsApp.common.models::CatalogFactory", function () {
+    beforeEach(module('fsApp.common.models'));
+
+    var constants_factory;
+    var catalog_factory;
+
+    beforeEach(inject(function ($injector) {
+        constants_factory = $injector.get('ConstantsFactory');
+        catalog_factory = $injector.get('CatalogFactory');
+
+    }));
+    it("factories defined", function () {
+        expect(constants_factory).toBeDefined();
+        expect(catalog_factory).toBeDefined();
+    });
+
+    var new_catalog_entry_form;
+
+    beforeAll(function () {
+        new_catalog_entry_form = {
+
+            parent_catalog_entry_id: null,
+            account_id: 1000,
+            catalog_entry_type: "fixed", //constants_factory.FIXED,
+            description: "first entry",
+            frequency: "monthly", //constants_factory.FREQ_MONTHLY,
+            frequency_param: 15,
+            amount: 1200.0,
+            param1: "param1",
+            param2: "param2",
+            tax_year_maximum: 99999.99,
+            start_date: new Date(2016, 0, 15),
+            end_date: new Date(2016, 11, 31)
+        };
+    });
+
+    describe("catalog manipulation", function () {
+        it("add entry", function () {
+            expect(constants_factory).toBeDefined();
+            catalog_factory.addCatalogEntry(new_catalog_entry_form);
+            expect(catalog_factory.getCatalogEntryCount()).toEqual(1);
+        });
+    });
+
+});
+
+xdescribe("fsApp.common.models::LedgerFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
@@ -27,7 +73,7 @@ describe("fsApp.common.models::LedgerFactory", function () {
             first_account = ledger_factory.getAccountList()[0];
             ledger_count = ledger_factory.getLedgerCount();
             journal_entries = ledger_factory.getJournalEntries(checking_id);
-            console.log('ledger_count: '+ledger_count);
+            console.log('ledger_count: ' + ledger_count);
 
         });
         it("successfully adds new account", function () {
@@ -36,8 +82,8 @@ describe("fsApp.common.models::LedgerFactory", function () {
             expect(first_account.name).toEqual("Checking");
             expect(first_account.balance).toEqual(1000.0);
             expect(first_account.balance_date).toEqual(balance_date);
-            console.log('ledger_count: '+ledger_count);
-            console.log('first journal: '+JSON.stringify(journal_entries[0]));
+            console.log('ledger_count: ' + ledger_count);
+            console.log('first journal: ' + JSON.stringify(journal_entries[0]));
         });
         it("successfully add new ledger and JE", function () {
             expect(ledger_count).toEqual(1);
@@ -45,7 +91,7 @@ describe("fsApp.common.models::LedgerFactory", function () {
             expect(journal_entries[0].journal_entry_date).toEqual(balance_date);
             expect(journal_entries[0].description).toEqual(constants_factory.OPENING_BALANCE);
             expect(journal_entries[0].amount).toEqual(1000.0);
-            console.log('ledger_count: '+ledger_count);
+            console.log('ledger_count: ' + ledger_count);
         })
     });
 
@@ -73,7 +119,7 @@ describe("Common models", function () {
         expect(constants_factory.FIRST_ACCOUNT_ID).toEqual(20000);
     });
 
-    describe("Date calculations", function () {
+    xdescribe("Date calculations", function () {
         it("should return first day in month", function () {
             var d1 = new Date(2016, 5, 5), e1 = new Date(2016, 5, 1);
 
@@ -90,7 +136,7 @@ describe("Common models", function () {
         });
 
     });
-    describe("Last day calculations", function () {
+    xdescribe("Last day calculations", function () {
         it("in any month pre-december, should return last day", function () {
             var d1 = new Date(2016, 3, 12);
             var e1 = new Date(2016, 3, 30);
@@ -116,7 +162,7 @@ describe("Common models", function () {
             expect(calculation_engine.calcLastWeekdayOfMonth(d1)).toEqual(e1);
         });
     });
-    describe("Add fixed units to dates", function () {
+    xdescribe("Add fixed units to dates", function () {
         it("add 1 week", function () {
             var d1 = new Date(2016, 0, 13);
             var e1 = new Date(2016, 0, 20);
@@ -142,5 +188,14 @@ describe("Common models", function () {
             expect(calculation_engine.addXMonthsTo(3, d1)).toEqual(e1);
         });
     });
+    describe("monthly schedule calculation", function () {
+        it("schedule monthly", function () {
+            var schedule = calculation_engine.calculateMonthlyScheduleDate(11, new Date(2016, 0, 11),
+                new Date(2016, 9, 12), new Date(2016, 0, 5));
 
+            expect(schedule[0]).toEqual(new Date(2016,0,11));
+            expect(schedule.length).toEqual(10);
+            expect(schedule[schedule.length - 1]).toEqual(new Date(2016, 9, 11));
+        })
+    })
 });
