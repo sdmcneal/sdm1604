@@ -10,6 +10,6 @@ app.controller('LedgerController', function($scope,LedgerFactory) {
 
     $scope.accounts = LedgerFactory.account_list;
     $scope.getLedger = function (account_id) {
-        return LedgerFactory.getLedger(account_id);
+        return LedgerFactory.getJournalEntries(account_id);
     }
 });
