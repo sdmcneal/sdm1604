@@ -11,8 +11,7 @@
             <select class="form-control" ng-model="catalog_form.frequency">
                 <option ng-repeat="option in frequency_options" value="{{option}}">{{option}}</option>
             </select>
-            Frequency Parameter:
-            Amount: <input type="number" class="form-control" ng-model="catalog_form.frequency_param" required>
+            Frequency Parameter: <input type="number" class="form-control" ng-model="catalog_form.frequency_param" required>
             Account:
             <select class="form-control" ng-model="catalog_form.account_id">
                 <option ng-repeat="option in account_options" value="{{option.account_id}}">{{option.name}}</option>
@@ -24,6 +23,7 @@
             Start Date: <input type="date" class="form-control" ng-model="catalog_form.start_date" required>
             End Date: <input type="date" class="form-control" ng-model="catalog_form.end_date" required>
             Amount: <input type="number" class="form-control" ng-model="catalog_form.amount" required>
+            Amount Calc: <input type="number" class="form-control" ng-model="catalog_form.amount_calc" step="0.01">
             <button class="btn btn-primary" type="submit" ng-click="createCatalogEntry()">Create Catalog Entry<br />
         </form>
     </div>
@@ -37,6 +37,7 @@
                 <th>Name</th>
                 <th>Type</th>
                 <th>Amount</th>
+                <th>Amount Calc</th>
                 <th>Date</th>
             </tr>
             </thead>
@@ -46,6 +47,7 @@
                 <td>{{u.description}}</td>
                 <td>{{u.catalog_entry_type}}</td>
                 <td>{{u.amount | currency }}</td>
+                <td>{{u.amount_calc | number:2 }}</td>
                 <td>{{u.start_date | date}}</td>
             </tbody>
         </table>

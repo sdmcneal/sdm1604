@@ -44,16 +44,20 @@ xdescribe("fsApp.common.models::CatalogFactory", function() {
 
 });
 
-xdescribe("fsApp.common.models::LedgerFactory", function() {
+describe("fsApp.common.models::LedgerFactory", function() {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
     var ledger_factory;
+    var catalog_factory;
+    var schedule_factory;
 
     beforeEach(inject(function($injector) {
         //beforeEach(module('fsApp.common.models'));
         constants_factory = $injector.get('ConstantsFactory');
         ledger_factory = $injector.get('LedgerFactory');
+        catalog_factory = $injector.get('CatalogFactory');
+        schedule_factory = $injector.get('ScheduleFactory');
     }));
 
     it("first id should be initialized", function() {
@@ -97,17 +101,59 @@ xdescribe("fsApp.common.models::LedgerFactory", function() {
     describe("purge scheduled ledgers", function() {
         it("remove scheduled entries", function() {
             var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date());
+            expect(ledger_factory.getJournalEntries(account_id).length).toEqual(1);
             ledger_factory.addJournalEntry(account_id, new Date(), 1, "1 with schedule", 10.0);
             ledger_factory.addJournalEntry(account_id, new Date(), null, "2 without schedule", 20.0);
             ledger_factory.addJournalEntry(account_id, new Date(), 3, "1 with schedule", 30.0);
             var ledger = ledger_factory.getJournalEntries(account_id);
+            //console.log('before JEs: '+JSON.stringify(ledger));
+            var start_length = ledger.length;
             expect(ledger.length).toEqual(4);
             ledger_factory.resetLedgers();
             ledger = ledger_factory.getJournalEntries(account_id);
-            expect(ledger.length).toEqual(3);
-            expect(ledger[ledger.length-1].amount).toEqual(30.0);
+            //console.log('after JEs: '+JSON.stringify(ledger));
+            expect(ledger.length).toEqual(start_length-2);
+            expect(ledger[ledger.length-1].amount).toEqual(20.0);
         });
-    })
+    });
+    describe("getLastBalance()", function() {
+       it("calculates last balance", function() {
+           var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date());
+           ledger_factory.addJournalEntry(account_id, new Date(), 1, "1 with schedule", 10.0);
+           ledger_factory.addJournalEntry(account_id, new Date(), null, "2 without schedule", 20.0);
+           ledger_factory.addJournalEntry(account_id, new Date(), 3, "1 with schedule", 30.0);
+           var last_balance = ledger_factory.getLastBalance(account_id);
+           expect(last_balance).toEqual(1000.0+10.0+20.0+30.0);
+       }) ;
+    });
+    describe("runSchedule()", function() {
+        it("calculates interest", function() {
+            var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date(2016,1,1));
+            //ledger_factory.addJournalEntry(account_id, new Date(2016,1,2), 1, "1 with schedule", 2000.0);
+            new_catalog_entry_form = {
+
+                parent_catalog_entry_id: null,
+                account_id: account_id,
+                catalog_entry_type: constants_factory.TYPE_INTEREST_ON_BALANCE,
+                description: "first entry",
+                frequency: "monthly", //constants_factory.FREQ_MONTHLY,
+                frequency_param: 15,
+                amount: 0.0,
+                amount_calc: 0.01,
+                param1: "param1",
+                param2: "param2",
+                tax_year_maximum: 99999.99,
+                start_date: new Date(2016, 1, 20),
+                end_date: new Date(2016, 11, 31)
+            };
+            //catalog_factory.addCatalogEntry(new_catalog_entry_form);
+            schedule_factory.generateScheduleFromCatalog(new_catalog_entry_form);
+            var ledgers = ledger_factory.getJournalEntries(account_id);
+            var balance_after_first_calc = ledgers[2].balance;
+            console.log('  journals='+ JSON.stringify(ledgers));
+            expect(balance_after_first_calc).toEqual(1000.0*1.01*1.01);
+        });
+    });
 
 });
 

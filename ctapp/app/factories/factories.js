@@ -61,15 +61,12 @@ angular.module('fsApp.common.models', [])
 
             return new_account.account_id;
         };
-
         service.getAccountCount = function () {
             return accounts.length;
         };
-
         service.getAccountList = function () {
             return accounts;
         };
-
         service.addLedger = function (account_id) {
             if (verbose>=2) console.log('LedgerFactory.addLedger()');
             var new_ledger = {
@@ -93,8 +90,7 @@ angular.module('fsApp.common.models', [])
             }
             ledgers[l].journal_entries = new_journal_entires;
           }
-        }
-
+        };
         service.addJournalEntry = function (account_id, journal_entry_date,
                                             schedule_entry_id, description, amount) {
             if (verbose>=2) console.log('LedgerFactory.addJournalEntry()');
@@ -120,17 +116,15 @@ angular.module('fsApp.common.models', [])
 
             return new_journal_entry.journal_entry_id;
         };
-
         service.getLedgerCount = function () {
             if (verbose>=3) console.log('ledger size='+ledgers)
             return ledgers.length;
         };
-
         service.getNextAccountID = function () {
             return next_account_id;
         };
-
         service.getJournalEntries = function (account_id) {
+            if (verbose>=2) console.log('LedgerFactory.getJournalEntries()');
             var _journal_entries;
             var i;
             var l;
@@ -141,16 +135,30 @@ angular.module('fsApp.common.models', [])
                     _journal_entries = l.journal_entries;
                 }
             }
+            if (verbose>=3) console.log('  returning journal entries: '+JSON.stringify(_journal_entries));
             return _journal_entries;
         };
-
+        service.getLastBalance = function (account_id) {
+            var journal_entries = service.getJournalEntries(account_id);
+            if (undefined==journal_entries) {
+                if (verbose>=1) console.log('no entries in account '+account_id);
+                return 0.0
+            } else {
+                var count = journal_entries.length;
+                if (count == 0) {
+                    return 0.0;
+                } else {
+                    return journal_entries[count - 1].balance;
+                }
+            }
+        };
         service.account_list = account_ids;
 
         return service;
     })
 
     .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine,LedgerFactory) {
-        var verbose = true;
+        var verbose = 1;
         var schedule_entries = [];
         var service = {};
         var next_schedule_entry_id;
@@ -172,12 +180,22 @@ angular.module('fsApp.common.models', [])
                     return (a.schedule_date - b.schedule_date);
                 });
                 schedule_entries.forEach(function(entry) {
+                    if (verbose>=3) console.log('ScheduleFactory.runSchedule() journal entry:'+ JSON.stringify(entry));
                     switch (entry.catalog_entry_type) {
                         case ConstantsFactory.FIXED:
                             LedgerFactory.addJournalEntry(entry.account_id,
                             entry.schedule_date, entry.schedule_entry_id,
                             entry.description,
                             entry.amount);
+                            break;
+                        case ConstantsFactory.TYPE_INTEREST_ON_BALANCE:
+                            var last_balance = LedgerFactory.getLastBalance(entry.account_id);
+                            var calc_amount = last_balance * entry.amount_calc;
+                            LedgerFactory.addJournalEntry(entry.account_id,
+                                entry.schedule_date, entry.schedule_entry_id,
+                                entry.description,
+                                calc_amount);
+                            break;
                     }
                 });
             }
@@ -252,6 +270,7 @@ angular.module('fsApp.common.models', [])
             }
             switch(catalog_entry.catalog_entry_type) {
                 case ConstantsFactory.FIXED:
+                case ConstantsFactory.TYPE_INTEREST_ON_BALANCE:
                     if (verbose>=3) console.log('generate fixed monthly');
                     service.saveFixedSchedule(schedule,catalog_entry);
                     service.runSchedule(); // TODO: delete this
@@ -293,10 +312,12 @@ angular.module('fsApp.common.models', [])
             ];
 
             constants.FIXED = "fixed";
+            constants.TYPE_INTEREST_ON_BALANCE = "interest on balance";
             constants.TYPE_ESCALATING = "fixed escalating";
 
             constants.TYPE_LIST = [
                 constants.FIXED,
+                constants.TYPE_INTEREST_ON_BALANCE,
                 constants.TYPE_ESCALATING
             ];
 
@@ -496,6 +517,7 @@ angular.module('fsApp.common.models', [])
                 frequency: form.frequency,
                 frequency_param: form.frequency_param,
                 amount: form.amount,
+                amount_calc: form.amount_calc,
                 param1: form.param1,
                 param2: form.param2,
                 tax_year_maximum: form.tax_year_maximum

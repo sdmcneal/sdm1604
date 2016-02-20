@@ -20,7 +20,7 @@
           <td>{{u.description}}</td>
           <td>{{u.account_id}}</td>
           <td>{{u.amount | currency }}</td>
-          <td>{{u.amount_calc }}</td>
+          <td>{{u.amount_calc | number:2 }}</td>
       </tbody>
     </table>
   </div>

@@ -34,7 +34,7 @@ app.controller('FSMainController', function($scope, UserFactory,
                 start_date: new Date(2016, 1, 12),
                 end_date: new Date(2016, 6, 15)
             };
-    var paycheck_id = CatalogFactory.addCatalogEntry(catalog_entry1);
+    var hoa_id = CatalogFactory.addCatalogEntry(catalog_entry1);
     
     var catalog_entry2 = {
                 frequency: ConstantsFactory.FREQ_FIRST_WEEKDAY_OF_MONTH,
@@ -49,7 +49,24 @@ app.controller('FSMainController', function($scope, UserFactory,
                 end_date: new Date(2016, 6, 15)
             };
     var paycheck_id = CatalogFactory.addCatalogEntry(catalog_entry2);
-    
+
+    var catalog_entry3 = {
+      description: 'Interest',
+      parent_id: '',
+      catalog_entry_type: ConstantsFactory.TYPE_INTEREST_ON_BALANCE,
+      account_id: checking_id,
+      paired_account_id: '',
+      start_date: new Date(2016,0,1),
+      end_date: new Date(2016,11,31),
+      amount: 0.0,
+      amount_calc: 0.1,
+      frequency: ConstantsFactory.FREQ_MONTHLY,
+      frequency_param: 0,
+      param1: '',
+      param2: '',
+      tax_year_maximum: ''
+    }
+    var interest_id = CatalogFactory.addCatalogEntry(catalog_entry3);
   };
 
   $scope.user_count = UserFactory.getUserCount();
