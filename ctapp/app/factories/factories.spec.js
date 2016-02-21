@@ -1,22 +1,22 @@
-xdescribe("fsApp.common.models::CatalogFactory", function() {
+xdescribe("fsApp.common.models::CatalogFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
     var catalog_factory;
 
-    beforeEach(inject(function($injector) {
+    beforeEach(inject(function ($injector) {
         constants_factory = $injector.get('ConstantsFactory');
         catalog_factory = $injector.get('CatalogFactory');
 
     }));
-    it("factories defined", function() {
+    it("factories defined", function () {
         expect(constants_factory).toBeDefined();
         expect(catalog_factory).toBeDefined();
     });
 
     var new_catalog_entry_form;
 
-    beforeAll(function() {
+    beforeAll(function () {
         new_catalog_entry_form = {
 
             parent_catalog_entry_id: null,
@@ -34,8 +34,8 @@ xdescribe("fsApp.common.models::CatalogFactory", function() {
         };
     });
 
-    describe("catalog manipulation", function() {
-        it("add entry", function() {
+    describe("catalog manipulation", function () {
+        it("add entry", function () {
             expect(constants_factory).toBeDefined();
             catalog_factory.addCatalogEntry(new_catalog_entry_form);
             expect(catalog_factory.getCatalogEntryCount()).toEqual(1);
@@ -44,7 +44,7 @@ xdescribe("fsApp.common.models::CatalogFactory", function() {
 
 });
 
-describe("fsApp.common.models::LedgerFactory", function() {
+describe("fsApp.common.models::ScheduleFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
@@ -52,7 +52,77 @@ describe("fsApp.common.models::LedgerFactory", function() {
     var catalog_factory;
     var schedule_factory;
 
-    beforeEach(inject(function($injector) {
+    beforeEach(inject(function ($injector) {
+        //beforeEach(module('fsApp.common.models'));
+        constants_factory = $injector.get('ConstantsFactory');
+        ledger_factory = $injector.get('LedgerFactory');
+        catalog_factory = $injector.get('CatalogFactory');
+        schedule_factory = $injector.get('ScheduleFactory');
+    }));
+    it("factories defined", function () {
+        expect(constants_factory).toBeDefined();
+        expect(catalog_factory).toBeDefined();
+        expect(ledger_factory).toBeDefined();
+    });
+
+
+    describe("generateJournalEntriesForLoanPayment()", function () {
+        var checking_id, loan_id, schedule_form, start_date, end_date, loan_payment, monthly_interest,
+            schedule_id,new_schedule_entry;
+
+        beforeEach(function () {
+            checking_id = ledger_factory.addAccount("Checking", "Liquid", 5000.0, new Date(2016, 0, 1));
+            loan_id = ledger_factory.addAccount("Car Loan", "Liability", -20000.0, new Date(2016, 0, 1));
+            start_date = new Date(2016, 0, 15);
+            end_date = new Date(2016, 5, 15);
+            loan_payment = -500.0;
+            monthly_interest = 0.005; // 6%
+            schedule_id = 4300;
+
+            schedule_form = {
+                account_id: checking_id,
+                paired_account_id: loan_id,
+                frequency: constants_factory.FREQ_MONTHLY,
+                frequency_param: 15,
+                catalog_entry_type: constants_factory.TYPE_LOAN_PAYMENT,
+                amount: loan_payment,
+                amount_calc: monthly_interest,
+                description: "car payment",
+                schedule_id: schedule_id
+
+            };
+            new_schedule_entry = {
+                schedule_entry_id: 5300,
+                catalog_entry_id: 6300,
+                catalog_entry_type: schedule_form.catalog_entry_type,
+                schedule_date: new Date(2016,0,15),
+                account_id: schedule_form.account_id,
+                paired_account_id: schedule_form.paired_account_id,
+                amount: schedule_form.amount,
+                amount_calc: schedule_form.amount_calc,
+                description: schedule_form.description
+            };
+
+            schedule_factory.generateJournalEntriesForLoanPayment(new_schedule_entry);
+        });
+        it("accounts defined", function () {
+            expect(ledger_factory.getLedgerCount()).toEqual(2);
+        });
+
+    });
+
+
+});
+
+xdescribe("fsApp.common.models::LedgerFactory", function () {
+    beforeEach(module('fsApp.common.models'));
+
+    var constants_factory;
+    var ledger_factory;
+    var catalog_factory;
+    var schedule_factory;
+
+    beforeEach(inject(function ($injector) {
         //beforeEach(module('fsApp.common.models'));
         constants_factory = $injector.get('ConstantsFactory');
         ledger_factory = $injector.get('LedgerFactory');
@@ -60,16 +130,16 @@ describe("fsApp.common.models::LedgerFactory", function() {
         schedule_factory = $injector.get('ScheduleFactory');
     }));
 
-    it("first id should be initialized", function() {
+    it("first id should be initialized", function () {
         //var l = ledger_factory.getAccountCount();
         //expect(l).toEqual(0);
         expect(ledger_factory.getNextAccountID()).toEqual(constants_factory.FIRST_ACCOUNT_ID);
     });
 
-    describe("add new account, ledger, and opening balance", function() {
+    xdescribe("add new account, ledger, and opening balance", function () {
         var balance_date, checking_id, account_count, first_account, ledger_count, journal_entries;
 
-        beforeAll(function() {
+        beforeAll(function () {
             console.log('beforeAll()');
             balance_date = new Date(2016, 1, 2);
             checking_id = ledger_factory.addAccount("Checking", "Liquid", 1000.0, balance_date);
@@ -80,7 +150,7 @@ describe("fsApp.common.models::LedgerFactory", function() {
             console.log('ledger_count: ' + ledger_count);
 
         });
-        it("successfully adds new account", function() {
+        it("successfully adds new account", function () {
             expect(account_count).toEqual(1);
             expect(checking_id).toEqual(constants_factory.FIRST_ACCOUNT_ID);
             expect(first_account.name).toEqual("Checking");
@@ -89,7 +159,7 @@ describe("fsApp.common.models::LedgerFactory", function() {
             console.log('ledger_count: ' + ledger_count);
             console.log('first journal: ' + JSON.stringify(journal_entries[0]));
         });
-        it("successfully add new ledger and JE", function() {
+        it("successfully add new ledger and JE", function () {
             expect(ledger_count).toEqual(1);
             expect(journal_entries[0].journal_entry_id).toEqual(constants_factory.FIRST_JOURNAL_ENTRY_ID);
             expect(journal_entries[0].journal_entry_date).toEqual(balance_date);
@@ -98,8 +168,8 @@ describe("fsApp.common.models::LedgerFactory", function() {
             console.log('ledger_count: ' + ledger_count);
         })
     });
-    describe("purge scheduled ledgers", function() {
-        it("remove scheduled entries", function() {
+    xdescribe("purge scheduled ledgers", function () {
+        it("remove scheduled entries", function () {
             var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date());
             expect(ledger_factory.getJournalEntries(account_id).length).toEqual(1);
             ledger_factory.addJournalEntry(account_id, new Date(), 1, "1 with schedule", 10.0);
@@ -112,23 +182,23 @@ describe("fsApp.common.models::LedgerFactory", function() {
             ledger_factory.resetLedgers();
             ledger = ledger_factory.getJournalEntries(account_id);
             //console.log('after JEs: '+JSON.stringify(ledger));
-            expect(ledger.length).toEqual(start_length-2);
-            expect(ledger[ledger.length-1].amount).toEqual(20.0);
+            expect(ledger.length).toEqual(start_length - 2);
+            expect(ledger[ledger.length - 1].amount).toEqual(20.0);
         });
     });
-    describe("getLastBalance()", function() {
-       it("calculates last balance", function() {
-           var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date());
-           ledger_factory.addJournalEntry(account_id, new Date(), 1, "1 with schedule", 10.0);
-           ledger_factory.addJournalEntry(account_id, new Date(), null, "2 without schedule", 20.0);
-           ledger_factory.addJournalEntry(account_id, new Date(), 3, "1 with schedule", 30.0);
-           var last_balance = ledger_factory.getLastBalance(account_id);
-           expect(last_balance).toEqual(1000.0+10.0+20.0+30.0);
-       }) ;
+    xdescribe("getLastBalance()", function () {
+        it("calculates last balance", function () {
+            var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date());
+            ledger_factory.addJournalEntry(account_id, new Date(), 1, "1 with schedule", 10.0);
+            ledger_factory.addJournalEntry(account_id, new Date(), null, "2 without schedule", 20.0);
+            ledger_factory.addJournalEntry(account_id, new Date(), 3, "1 with schedule", 30.0);
+            var last_balance = ledger_factory.getLastBalance(account_id);
+            expect(last_balance).toEqual(1000.0 + 10.0 + 20.0 + 30.0);
+        });
     });
-    describe("runSchedule()", function() {
-        it("calculates interest", function() {
-            var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date(2016,1,1));
+    xdescribe("runSchedule()", function () {
+        it("calculates interest", function () {
+            var account_id = ledger_factory.addAccount("account1", "cash", 1000.0, new Date(2016, 1, 1));
             //ledger_factory.addJournalEntry(account_id, new Date(2016,1,2), 1, "1 with schedule", 2000.0);
             new_catalog_entry_form = {
 
@@ -150,107 +220,107 @@ describe("fsApp.common.models::LedgerFactory", function() {
             schedule_factory.generateScheduleFromCatalog(new_catalog_entry_form);
             var ledgers = ledger_factory.getJournalEntries(account_id);
             var balance_after_first_calc = ledgers[2].balance;
-            console.log('  journals='+ JSON.stringify(ledgers));
-            expect(balance_after_first_calc).toEqual(1000.0*1.01*1.01);
+            console.log('  journals=' + JSON.stringify(ledgers));
+            expect(balance_after_first_calc).toEqual(1000.0 * 1.01 * 1.01);
         });
     });
 
 });
 
-describe("Common models", function() {
-    beforeEach(function() {
+xdescribe("Common models", function () {
+    beforeEach(function () {
         module('fsApp.common.models');
     });
 
     var constants_factory;
     var calculation_engine;
 
-    beforeEach(inject(function(_ConstantsFactory_, CalculationEngine) {
+    beforeEach(inject(function (_ConstantsFactory_, CalculationEngine) {
         constants_factory = _ConstantsFactory_;
         calculation_engine = CalculationEngine;
 
     }));
 
-    it("user id start should be 10000", function() {
+    it("user id start should be 10000", function () {
         expect(constants_factory.FIRST_USER_ID).toEqual(10000);
     });
 
-    it("another one", function() {
+    it("another one", function () {
         expect(constants_factory.FIRST_ACCOUNT_ID).toEqual(20000);
     });
 
-    xdescribe("Date calculations", function() {
-        it("should return first day in month", function() {
+    xdescribe("Date calculations", function () {
+        it("should return first day in month", function () {
             var d1 = new Date(2016, 5, 5),
                 e1 = new Date(2016, 5, 1);
 
             // include negative test?
             expect(calculation_engine.calcFirstDayOfMonth(d1)).toEqual(e1);
         });
-        it("when first day is saturday, it should return +2 days (3rd)", function() {
+        it("when first day is saturday, it should return +2 days (3rd)", function () {
             expect(calculation_engine.calcFirstWeekdayOfMonth(new Date(2017, 3, 5))).toEqual(
                 new Date(2017, 3, 3));
         });
-        it("when first day is Sunday, it should return +1 day (2nd)", function() {
+        it("when first day is Sunday, it should return +1 day (2nd)", function () {
             expect(calculation_engine.calcFirstWeekdayOfMonth(new Date(2016, 4, 5))).toEqual(
                 new Date(2016, 4, 2));
         });
 
     });
-    xdescribe("Last day calculations", function() {
-        it("in any month pre-december, should return last day", function() {
+    xdescribe("Last day calculations", function () {
+        it("in any month pre-december, should return last day", function () {
             var d1 = new Date(2016, 3, 12);
             var e1 = new Date(2016, 3, 30);
 
             expect(calculation_engine.calcLastDayOfMonth(d1)).toEqual(e1);
         });
-        it("in any month pre-december, should return last day", function() {
+        it("in any month pre-december, should return last day", function () {
             var d1 = new Date(2016, 11, 12);
             var e1 = new Date(2016, 11, 31);
 
             expect(calculation_engine.calcLastDayOfMonth(d1)).toEqual(e1);
         });
-        it("in month ending on Saturday, should return -1 day", function() {
+        it("in month ending on Saturday, should return -1 day", function () {
             var d1 = new Date(2016, 3, 30);
             var e1 = new Date(2016, 3, 29);
 
             expect(calculation_engine.calcLastWeekdayOfMonth(d1)).toEqual(e1);
         });
-        it("in month ending on Sunday, should return -2 days", function() {
+        it("in month ending on Sunday, should return -2 days", function () {
             var d1 = new Date(2016, 6, 28);
             var e1 = new Date(2016, 6, 29);
 
             expect(calculation_engine.calcLastWeekdayOfMonth(d1)).toEqual(e1);
         });
     });
-    xdescribe("Add fixed units to dates", function() {
-        it("add 1 week", function() {
+    xdescribe("Add fixed units to dates", function () {
+        it("add 1 week", function () {
             var d1 = new Date(2016, 0, 13);
             var e1 = new Date(2016, 0, 20);
 
             expect(calculation_engine.addXWeeksTo(1, d1)).toEqual(e1);
         });
-        it("add 7 weeks", function() {
+        it("add 7 weeks", function () {
             var d1 = new Date(2016, 11, 13);
             var e1 = new Date(2017, 0, 31);
 
             expect(calculation_engine.addXWeeksTo(7, d1)).toEqual(e1);
         });
-        it("add 1 month", function() {
+        it("add 1 month", function () {
             var d1 = new Date(2016, 0, 13);
             var e1 = new Date(2016, 1, 13);
 
             expect(calculation_engine.addXMonthsTo(1, d1)).toEqual(e1);
         });
-        it("add 3 months over year end point", function() {
+        it("add 3 months over year end point", function () {
             var d1 = new Date(2016, 11, 13);
             var e1 = new Date(2017, 2, 13);
 
             expect(calculation_engine.addXMonthsTo(3, d1)).toEqual(e1);
         });
     });
-    describe("monthly schedule calculation", function() {
-        it("schedule monthly", function() {
+    describe("monthly schedule calculation", function () {
+        it("schedule monthly", function () {
             var schedule = calculation_engine.calculateMonthlyScheduleDate(11, new Date(2016, 0, 11),
                 new Date(2016, 9, 12), new Date(2016, 0, 5));
 
@@ -258,7 +328,7 @@ describe("Common models", function() {
             expect(schedule.length).toEqual(10);
             expect(schedule[schedule.length - 1]).toEqual(new Date(2016, 9, 11));
         });
-        it("schedule first weekday", function() {
+        it("schedule first weekday", function () {
             var schedule = calculation_engine.calculateFirstWeekdayOfMonths(new Date(2016, 0, 11),
                 new Date(2016, 9, 12), new Date(2016, 0, 5));
 
@@ -268,7 +338,7 @@ describe("Common models", function() {
             expect(schedule.length).toEqual(9);
 
         });
-        it("schedule last weekday", function() {
+        it("schedule last weekday", function () {
             var schedule = calculation_engine.calculateLastWeekdayOfMonths(new Date(2016, 0, 11),
                 new Date(2016, 9, 12), new Date(2016, 0, 5));
 
@@ -280,19 +350,19 @@ describe("Common models", function() {
         });
 
     });
-    describe("schedule to ledger", function() {
+    describe("schedule to ledger", function () {
         var schedule_factory, ledger_factory, catalog_entry;
-        beforeEach(inject(function($injector) {
+        beforeEach(inject(function ($injector) {
             schedule_factory = $injector.get('ScheduleFactory');
             ledger_factory = $injector.get('LedgerFactory');
             catalog_factory = $injector.get('CatalogFactory');
 
         }));
-        it("factories defined", function() {
+        it("factories defined", function () {
             expect(schedule_factory).toBeDefined();
             expect(ledger_factory).toBeDefined();
         });
-        it("schedule fixed catalog entry and open balance", function() {
+        it("schedule fixed catalog entry and open balance", function () {
             var account = ledger_factory.addAccount("Checking", "Cash", 1000.0, new Date(2016, 1, 14));
             expect(account).toBeDefined();
 
@@ -327,7 +397,7 @@ describe("Common models", function() {
             expect(journal_entries[1].amount).toEqual(-76.0);
             expect(journal_entries[1].balance).toEqual(1000.0 - 76.0);
         });
-        xit("schedule fixed catalog entry at end of month and open balance", function() {
+        xit("schedule fixed catalog entry at end of month and open balance", function () {
             var account = ledger_factory.addAccount("Checking", "Cash", 1000.0, new Date(2016, 1, 14));
             expect(account).toBeDefined();
 

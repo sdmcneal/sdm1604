@@ -24,7 +24,7 @@ angular.module('fsApp.common.models', [])
     })
 
     .factory('LedgerFactory', function (ConstantsFactory) {
-        var verbose = 1; // 1=error only, 2=init/tracer, 3=debug
+        var verbose = 3; // 1=error only, 2=init/tracer, 3=debug
         var ledgers = [];
         var accounts = [];
         var account_ids = [];
@@ -117,7 +117,7 @@ angular.module('fsApp.common.models', [])
             return new_journal_entry.journal_entry_id;
         };
         service.getLedgerCount = function () {
-            if (verbose>=3) console.log('ledger size='+ledgers)
+            if (verbose>=3) console.log('ledger size='+ledgers.length)
             return ledgers.length;
         };
         service.getNextAccountID = function () {
@@ -173,6 +173,12 @@ angular.module('fsApp.common.models', [])
             range_end_date = ConstantsFactory.DEFAULT_RANGE_END;
         }
 
+        service.generateJournalEntriesForLoanPayment = function(entry) {
+            if (verbose>=2) console.log('ScheduleFactory.generateJournalEntriesForLoanPayment()');
+
+            // paired account is liability account
+            var last_liability_account_balance = LedgerFactory.getLastBalance(entry.paired_account_id);
+        };
         service.runSchedule = function() {
           LedgerFactory.resetLedgers();
             if (0<schedule_entries.length) {
@@ -196,12 +202,15 @@ angular.module('fsApp.common.models', [])
                                 entry.description,
                                 calc_amount);
                             break;
+                        case ConstantsFactory.TYPE_LOAN_PAYMENT:
+                            service.generateJournalEntriesForLoanPayment(entry);
+                            break;
                     }
                 });
             }
         };
         service.addScheduleEntry = function (catalog_entry_type,catalog_entry_id, schedule_date,
-                                             account_id, amount, amount_calc,description) {
+                                             account_id,paired_account_id,amount, amount_calc,description) {
 
             if (verbose>=2) console.log('ScheduleFactory.addScheduleEntry()');
 
@@ -211,6 +220,7 @@ angular.module('fsApp.common.models', [])
                 catalog_entry_type: catalog_entry_type,
                 schedule_date: schedule_date,
                 account_id: account_id,
+                paired_account_id: paired_account_id,
                 amount: amount,
                 amount_calc: amount_calc,
                 description: description
@@ -236,7 +246,7 @@ angular.module('fsApp.common.models', [])
         service.saveFixedSchedule = function(schedule,catalog_entry) {
             schedule.forEach(function (entry) {
                 service.addScheduleEntry(catalog_entry.catalog_entry_type,catalog_entry.catalog_entry_id,
-                entry,catalog_entry.account_id,
+                entry,catalog_entry.account_id,catalog_entry.paired_account_id,
                 catalog_entry.amount,catalog_entry.amount_calc,catalog_entry.description);
             });
 
@@ -271,6 +281,7 @@ angular.module('fsApp.common.models', [])
             switch(catalog_entry.catalog_entry_type) {
                 case ConstantsFactory.FIXED:
                 case ConstantsFactory.TYPE_INTEREST_ON_BALANCE:
+                case ConstantsFactory.TYPE_LOAN_PAYMENT:
                     if (verbose>=3) console.log('generate fixed monthly');
                     service.saveFixedSchedule(schedule,catalog_entry);
                     service.runSchedule(); // TODO: delete this
@@ -313,11 +324,13 @@ angular.module('fsApp.common.models', [])
 
             constants.FIXED = "fixed";
             constants.TYPE_INTEREST_ON_BALANCE = "interest on balance";
+            constants.TYPE_LOAN_PAYMENT = "loan payment",
             constants.TYPE_ESCALATING = "fixed escalating";
 
             constants.TYPE_LIST = [
                 constants.FIXED,
                 constants.TYPE_INTEREST_ON_BALANCE,
+                constants.TYPE_LOAN_PAYMENT,
                 constants.TYPE_ESCALATING
             ];
 
