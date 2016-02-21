@@ -112,6 +112,8 @@ angular.module('fsApp.common.models', [])
             if (verbose>=3) console.log('Number(amount)='+Number(amount)+' last balance='+Number(last_balance));
             new_journal_entry.balance = last_balance + Number(amount);
 
+            if (verbose>=3) console.log('  logging journal: '+JSON.stringify(new_journal_entry));
+            
             ledger.push(new_journal_entry);
 
             return new_journal_entry.journal_entry_id;
@@ -178,6 +180,21 @@ angular.module('fsApp.common.models', [])
 
             // paired account is liability account
             var last_liability_account_balance = LedgerFactory.getLastBalance(entry.paired_account_id);
+            var interest_amount = last_liability_account_balance * entry.amount_calc;
+            var principle_adjustment = interest_amount - entry.amount;
+            
+            // deduction journal
+            LedgerFactory.addJournalEntry(entry.account_id,
+                                entry.schedule_date, entry.schedule_entry_id,
+                                entry.description,
+                                entry.amount);
+                                
+            // principle adjustment
+            LedgerFactory.addJournalEntry(entry.paired_account_id,
+            entry.schedule_date,entry.schedule_entry_id,entry.description,
+            principle_adjustment);
+            
+            
         };
         service.runSchedule = function() {
           LedgerFactory.resetLedgers();

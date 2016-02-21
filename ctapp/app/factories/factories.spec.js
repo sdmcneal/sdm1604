@@ -103,11 +103,44 @@ describe("fsApp.common.models::ScheduleFactory", function () {
                 description: schedule_form.description
             };
 
-            schedule_factory.generateJournalEntriesForLoanPayment(new_schedule_entry);
+            
         });
-        it("accounts defined", function () {
-            expect(ledger_factory.getLedgerCount()).toEqual(2);
+        describe("single journal", function() {
+            var checking_ledger, loan_ledger;
+            beforeEach(function() {
+                schedule_factory.generateJournalEntriesForLoanPayment(new_schedule_entry);   
+                checking_ledger = ledger_factory.getJournalEntries(checking_id);
+                loan_ledger = ledger_factory.getJournalEntries(loan_id);
+                
+                
+            });
+            it("accounts defined", function () {
+                expect(ledger_factory.getLedgerCount()).toEqual(2);
+                expect(checking_ledger.length).toEqual(2);
+                expect(loan_ledger.length).toEqual(2);
+            });
+            it("check interest calculation", function() {
+                expect(checking_ledger[1].amount).toEqual(loan_payment);
+                var interest_amount = -monthly_interest * 20000;
+                expect(loan_ledger[1].amount).toEqual(interest_amount-loan_payment);
+            });
         });
+         describe("schedule loan journal entries", function() {
+            var checking_ledger, loan_ledger;
+            beforeEach(function() {
+                catalog_factory.addCatalogEntry(schedule_form);
+                // checking_ledger = ledger_factory.getJournalEntries(checking_id);
+                // loan_ledger = ledger_factory.getJournalEntries(loan_id);
+            });
+            it("accounts defined", function () {
+                // expect(ledger_factory.getLedgerCount()).toEqual(2);
+                // expect(checking_ledger.length).toEqual(2);
+                // expect(loan_ledger.length).toEqual(2);
+            });
+           
+        });
+        
+        
 
     });
 
