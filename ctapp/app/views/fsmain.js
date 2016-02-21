@@ -21,6 +21,7 @@ app.controller('FSMainController', function($scope, UserFactory,
     var checking_id = LedgerFactory.addAccount("Checking", "Liquid", 1000.0, new Date());
     var savings_id = LedgerFactory.addAccount("Savings", "Liquid", 1000.0, new Date());
     var federal_id = LedgerFactory.addAccount("Federal Tax", "Report", 0.0, new Date(2016, 0, 1));
+    var loan_id = LedgerFactory.addAccount("Car Loan", "Report", -20000, new Date(2016, 0, 1));
     
     var catalog_entry1 = {
                 frequency: ConstantsFactory.FREQ_MONTHLY,
@@ -67,6 +68,24 @@ app.controller('FSMainController', function($scope, UserFactory,
       tax_year_maximum: ''
     }
     var interest_id = CatalogFactory.addCatalogEntry(catalog_entry3);
+    
+    var catalog_entry4 = {
+      description: 'Car Payment',
+      parent_id: '',
+      catalog_entry_type: ConstantsFactory.TYPE_LOAN_PAYMENT,
+      account_id: checking_id,
+      paired_account_id: loan_id,
+      start_date: new Date(2016,0,1),
+      end_date: new Date(2016,11,31),
+      amount: -300.0,
+      amount_calc: 0.005,
+      frequency: ConstantsFactory.FREQ_MONTHLY,
+      frequency_param: 16,
+      param1: '',
+      param2: '',
+      tax_year_maximum: ''
+    }
+    var interest_id = CatalogFactory.addCatalogEntry(catalog_entry4);
   };
 
   $scope.user_count = UserFactory.getUserCount();

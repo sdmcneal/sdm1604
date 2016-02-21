@@ -74,7 +74,7 @@ describe("fsApp.common.models::ScheduleFactory", function () {
             checking_id = ledger_factory.addAccount("Checking", "Liquid", 5000.0, new Date(2016, 0, 1));
             loan_id = ledger_factory.addAccount("Car Loan", "Liability", -20000.0, new Date(2016, 0, 1));
             start_date = new Date(2016, 0, 15);
-            end_date = new Date(2016, 5, 15);
+            end_date = new Date(2016, 2, 15);
             loan_payment = -500.0;
             monthly_interest = 0.005; // 6%
             schedule_id = 4300;
@@ -88,8 +88,9 @@ describe("fsApp.common.models::ScheduleFactory", function () {
                 amount: loan_payment,
                 amount_calc: monthly_interest,
                 description: "car payment",
-                schedule_id: schedule_id
-
+                schedule_id: schedule_id,
+                start_date: start_date,
+                end_date: end_date
             };
             new_schedule_entry = {
                 schedule_entry_id: 5300,
@@ -117,25 +118,25 @@ describe("fsApp.common.models::ScheduleFactory", function () {
             it("accounts defined", function () {
                 expect(ledger_factory.getLedgerCount()).toEqual(2);
                 expect(checking_ledger.length).toEqual(2);
-                expect(loan_ledger.length).toEqual(2);
+                expect(loan_ledger.length).toEqual(3);
             });
             it("check interest calculation", function() {
                 expect(checking_ledger[1].amount).toEqual(loan_payment);
                 var interest_amount = -monthly_interest * 20000;
-                expect(loan_ledger[1].amount).toEqual(interest_amount-loan_payment);
+                expect(loan_ledger[1].amount).toEqual(interest_amount);
             });
         });
          describe("schedule loan journal entries", function() {
             var checking_ledger, loan_ledger;
             beforeEach(function() {
                 catalog_factory.addCatalogEntry(schedule_form);
-                // checking_ledger = ledger_factory.getJournalEntries(checking_id);
-                // loan_ledger = ledger_factory.getJournalEntries(loan_id);
+                checking_ledger = ledger_factory.getJournalEntries(checking_id);
+                loan_ledger = ledger_factory.getJournalEntries(loan_id);
             });
             it("accounts defined", function () {
-                // expect(ledger_factory.getLedgerCount()).toEqual(2);
-                // expect(checking_ledger.length).toEqual(2);
-                // expect(loan_ledger.length).toEqual(2);
+                expect(ledger_factory.getLedgerCount()).toEqual(2);
+                expect(checking_ledger.length).toEqual(4);
+                expect(loan_ledger.length).toEqual(7);
             });
            
         });

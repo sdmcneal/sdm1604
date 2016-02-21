@@ -24,7 +24,7 @@ angular.module('fsApp.common.models', [])
     })
 
     .factory('LedgerFactory', function (ConstantsFactory) {
-        var verbose = 3; // 1=error only, 2=init/tracer, 3=debug
+        var verbose = 1; // 1=error only, 2=init/tracer, 3=debug
         var ledgers = [];
         var accounts = [];
         var account_ids = [];
@@ -126,7 +126,7 @@ angular.module('fsApp.common.models', [])
             return next_account_id;
         };
         service.getJournalEntries = function (account_id) {
-            if (verbose>=2) console.log('LedgerFactory.getJournalEntries()');
+            if (verbose>=2) console.log('LedgerFactory.getJournalEntries('+account_id+')');
             var _journal_entries;
             var i;
             var l;
@@ -188,11 +188,16 @@ angular.module('fsApp.common.models', [])
                                 entry.schedule_date, entry.schedule_entry_id,
                                 entry.description,
                                 entry.amount);
-                                
+                              
+            // interest adjustment
+            LedgerFactory.addJournalEntry(entry.paired_account_id,
+            entry.schedule_date,entry.schedule_entry_id,entry.description + ' interest',
+            interest_amount);
+            
             // principle adjustment
             LedgerFactory.addJournalEntry(entry.paired_account_id,
             entry.schedule_date,entry.schedule_entry_id,entry.description,
-            principle_adjustment);
+            -entry.amount);
             
             
         };
@@ -542,6 +547,7 @@ angular.module('fsApp.common.models', [])
                 catalog_entry_id: next_catalog_entry_id++,
                 parent_catalog_entry_id: form.parent_catalog_entry_id,
                 account_id: form.account_id,
+                paired_account_id: form.paired_account_id,
                 catalog_entry_type: form.catalog_entry_type,
                 description: form.description,
                 frequency: form.frequency,
