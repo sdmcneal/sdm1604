@@ -7,6 +7,11 @@ var http = require('http');
 var path = require('path');
 var async = require('async');
 var express = require('express');
+var mongo = require('mongodb');
+var mongoose = require('mongoose');
+var dao = require('./ctapp/app/models/fsDAO');
+var Schema = mongoose.Schema;
+
 var verbose = true;
 //
 // ## SimpleServer `SimpleServer(obj)`
@@ -16,6 +21,28 @@ var verbose = true;
 //
 var router = express();
 var server = http.createServer(router);
+mongoose.connect('mongodb://localhost/fs');
+
+var sandboxSchema = new Schema({
+  user_id: Number,
+  name: String,
+  config: String
+});
+
+var Sandbox = mongoose.model('Sandbox',sandboxSchema);
+
+var db = mongoose.connection;
+db.on('error',console.error.bind(console,'connection error: '));
+db.once('open', function() {
+  console.log('database connected.');
+  dao.saveAccount(3000,"Dave","Cash",3333.0,new Date());
+
+  var next_sandbox = new Sandbox( {user_id: 2000, name: "Fred", config: "something else"});
+  next_sandbox.save(function(err,f) {
+    console.log('saved '+JSON.stringify(f));
+  });
+
+});
 
 router.use(express.bodyParser());
 router.get('/api/gettrack/:id', function(req,res) {
