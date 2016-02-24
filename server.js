@@ -7,6 +7,7 @@ var http = require('http');
 var path = require('path');
 var async = require('async');
 var express = require('express');
+var apirouter = require('./ctapp/app/api/api.router');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var dao = require('./ctapp/app/models/fsDAO');
@@ -45,17 +46,14 @@ db.once('open', function() {
 });
 
 router.use(express.bodyParser());
-router.put('/api/saveaccount', function(req,res) {
-  console.log('  req.body='+ JSON.stringify(req.body));
-  dao.saveAccount(3000,"Dave","Cash",3333.0,new Date());
-  
-  res.send('save account');
-});
+
 router.post('/api/recordtrack', function(req,res) {
   // tested with curl -d '{"key":"value"}' -H "Content-Type: application/json" http://127.0.0.1:8080/api/recordtrack
   if (verbose) console.log('received /api/recordtrack: '+JSON.stringify(req.body));
   res.send('submission received');
 })
+router.use('/api',apirouter);
+
 router.use(express.static(path.resolve(__dirname, 'ctapp')));
 
 server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
