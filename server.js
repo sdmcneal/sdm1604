@@ -35,7 +35,7 @@ var db = mongoose.connection;
 db.on('error',console.error.bind(console,'connection error: '));
 db.once('open', function() {
   console.log('database connected.');
-  dao.saveAccount(3000,"Dave","Cash",3333.0,new Date());
+
 
   var next_sandbox = new Sandbox( {user_id: 2000, name: "Fred", config: "something else"});
   next_sandbox.save(function(err,f) {
@@ -45,10 +45,11 @@ db.once('open', function() {
 });
 
 router.use(express.bodyParser());
-router.get('/api/gettrack/:id', function(req,res) {
-  var _id = req.params.id;
+router.put('/api/saveaccount', function(req,res) {
+  console.log('  req.body='+ JSON.stringify(req.body));
+  dao.saveAccount(3000,"Dave","Cash",3333.0,new Date());
   
-  res.send('/api/gettrack/id:'+_id);
+  res.send('save account');
 });
 router.post('/api/recordtrack', function(req,res) {
   // tested with curl -d '{"key":"value"}' -H "Content-Type: application/json" http://127.0.0.1:8080/api/recordtrack

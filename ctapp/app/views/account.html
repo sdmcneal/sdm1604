@@ -26,7 +26,7 @@
     <form novalidate class="form-group">
         Name: <input type="text" class="form-control" ng-model="account_form.name" required><br />
         Type: <input type="text" class="form-control" ng-model="account_form.type" required><br />
-        Balance: <input  class="form-control" type="text" ng-model="account_form.balance" required><br />
+        Balance: <input  class="form-control" type="number" ng-model="account_form.balance" required><br />
         Balance Date: <input  class="form-control" type="date" ng-model="account_form.balance_date" required><br />
         <button class="btn btn-primary" type="submit" ng-click="createAccount()">Create Account<br />
         
