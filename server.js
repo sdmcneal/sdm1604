@@ -38,20 +38,20 @@ db.once('open', function() {
   console.log('database connected.');
 
 
-  var next_sandbox = new Sandbox( {user_id: 2000, name: "Fred", config: "something else"});
-  next_sandbox.save(function(err,f) {
-    console.log('saved '+JSON.stringify(f));
-  });
+  //var next_sandbox = new Sandbox( {user_id: 2000, name: "Fred", config: "something else"});
+  //next_sandbox.save(function(err,f) {
+  //  console.log('saved '+JSON.stringify(f));
+  //});
 
 });
 
 router.use(express.bodyParser());
 
-router.post('/api/recordtrack', function(req,res) {
-  // tested with curl -d '{"key":"value"}' -H "Content-Type: application/json" http://127.0.0.1:8080/api/recordtrack
-  if (verbose) console.log('received /api/recordtrack: '+JSON.stringify(req.body));
-  res.send('submission received');
-})
+//router.post('/api/recordtrack', function(req,res) {
+//  // tested with curl -d '{"key":"value"}' -H "Content-Type: application/json" http://127.0.0.1:8080/api/recordtrack
+//  if (verbose) console.log('received /api/recordtrack: '+JSON.stringify(req.body));
+//  res.send('submission received');
+//})
 router.use('/api',apirouter);
 
 router.use(express.static(path.resolve(__dirname, 'ctapp')));

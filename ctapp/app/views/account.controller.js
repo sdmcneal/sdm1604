@@ -30,7 +30,7 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
 
         var form = $scope.account_form;
 
-        var account = LedgerFactory.addAccount(form.name,form.type,form.balance,form.balance_date);
+        form.account_id = LedgerFactory.addAccount(form.name,form.type,form.balance,form.balance_date);
 
         $http.put('/api/saveaccount',form)
             .success(function(data,status) {

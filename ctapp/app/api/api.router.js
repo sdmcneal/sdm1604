@@ -11,7 +11,7 @@ router.use(function timeLog(req, res, next) {
 
 router.put('/saveaccount', function(req,res) {
     console.log('  req.body='+ JSON.stringify(req.body));
-    dao.saveAccount(3000,"Dave","Cash",3333.0,new Date());
+    dao.saveAccount(req.body);
 
     res.send('save account');
 });
