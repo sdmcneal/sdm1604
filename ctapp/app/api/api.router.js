@@ -16,4 +16,11 @@ router.put('/saveaccount', function(req,res) {
     res.send('save account');
 });
 
+router.put('/savecatalog', function(req,res) {
+    console.log('  req.body='+ JSON.stringify(req.body));
+    dao.saveCatalog(req.body);
+
+    res.send('save catalog');
+});
+
 module.exports = router;

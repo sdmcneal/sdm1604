@@ -2,7 +2,7 @@
 
 angular.module('fsApp.views.catalog',['fsApp.common.models'])
 
-.controller('CatalogController',function($scope,CatalogFactory,ScheduleFactory,ConstantsFactory,
+.controller('CatalogController',function($scope,$http,CatalogFactory,ScheduleFactory,ConstantsFactory,
 LedgerFactory) {
    var verbose = true;
 
@@ -36,13 +36,27 @@ LedgerFactory) {
         }
     }
 
-    $scope.createCatalogEntry = function () {
-        CatalogFactory.addCatalogEntry($scope.catalog_form);
-    };
-   
    $scope.catalogEntryCount = CatalogFactory.getCatalogEntryCount();
    $scope.catalogEntries = CatalogFactory.getCatalogEntries();
    
+   $scope.createCatalogEntry = function() {
+        if (verbose>=2) console.log('CatalogController.createCatalog()');
+
+        
+        var form = $scope.catalog_form;
+
+        form.catalog_entry_id = CatalogFactory.addCatalogEntry($scope.catalog_form);
+
+        $http.put('/api/savecatalog',form)
+            .success(function(data,status) {
+                if (verbose>=3) console.log('saved catalog: '+JSON.stringify(data));
+            })
+            .error(function(data,status) {
+                console.log('error saving catalog');
+            });
+
+        clearForm();
+    };
    
    
 });
