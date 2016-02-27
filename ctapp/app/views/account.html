@@ -10,6 +10,7 @@
                 <th>Type</th>
                 <th>Balance</th>
                 <th>Date</th>
+                <th>Edit</th>
             </tr>
             </thead>
             <tbody>
@@ -19,16 +20,24 @@
                 <td>{{u.type}}</td>
                 <td>{{u.balance | currency }}</td>
                 <td>{{u.balance_date | date}}</td>
+                <td><button class="btn btn-info" ng-click="editAccount(u.account_id)">Edit</button></td>
+            </tr>
             </tbody>
         </table>
     </div>
-    <h2>Add Account</h2>
+    <h2 ng-if="account_form.edit_mode==false">Add Account</h2>
+    <h2 ng-if="account_form.edit_mode==true">Edit Account</h2>
+
     <form novalidate class="form-group">
-        Name: <input type="text" class="form-control" ng-model="account_form.name" required><br />
-        Type: <input type="text" class="form-control" ng-model="account_form.type" required><br />
-        Balance: <input  class="form-control" type="number" ng-model="account_form.balance" required><br />
-        Balance Date: <input  class="form-control" type="date" ng-model="account_form.balance_date" required><br />
-        <button class="btn btn-primary" type="submit" ng-click="createAccount()">Create Account<br />
+        Name: <input type="text" class="form-control" ng-model="account_form.name" required /><br />
+        Type: <input type="text" class="form-control" ng-model="account_form.type" required /><br />
+        Balance: <input  class="form-control" type="number" ng-model="account_form.balance" required /><br />
+        Balance Date: <input  class="form-control" type="date" ng-model="account_form.balance_date" required /><br />
+        <button class="btn btn-primary" type="submit" ng-click="createAccount()">
+            <div ng-if="account_form.edit_mode==false">Create Account</div>
+            <div ng-if="account_form.edit_mode==true">Update Account</div>
+        </button><br />
         
     </form>
+    <button class="btn btn-danger" ng-click="dropAllAccounts()">Delete All Accounts</button>
 </div>

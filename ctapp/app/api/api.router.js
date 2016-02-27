@@ -16,6 +16,20 @@ router.put('/saveaccount', function(req,res) {
     res.send('save account');
 });
 
+router.put('/updateaccount', function(req,res) {
+    console.log('  req.body='+ JSON.stringify(req.body));
+    dao.updateAccount(req.body);
+
+    res.send('update account');
+});
+
+router.get('/dropallaccounts', function(req,res) {
+    console.log('  req.body='+ JSON.stringify(req.body));
+    dao.dropAllAccounts();
+
+    res.send('drop accounts');
+});
+
 router.put('/savecatalog', function(req,res) {
     console.log('  req.body='+ JSON.stringify(req.body));
     dao.saveCatalog(req.body);

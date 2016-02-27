@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var models = require('./fsmodels');
+var verbose = 3;
 
 module.exports.saveAccount = function(data) {
     var new_account = new models.Account( {
@@ -15,6 +16,26 @@ module.exports.saveAccount = function(data) {
 
     new_account.save(function(err,a) {
         console.log('saved account: '+JSON.stringify(a));
+    });
+};
+module.exports.updateAccount = function(data) {
+    if (verbose>=2) console.log('fsDAO.updateAccount()');
+
+    models.Account.findOne({account_id: data.account_id}, function(err,doc) {
+        doc.name = data.name;
+        doc.type = data.type;
+        doc.balance = data.balance;
+        doc.balance_date = data.balance_date;
+        doc.save(function (err,a) {
+            if (verbose>=3) console.log('updated account: ' + JSON.stringify(a));
+        });
+    });
+};
+module.exports.dropAllAccounts = function() {
+    if (verbose>=2) console.log('fsDAO.dropAllAccounts()');
+
+    mongoose.connection.db.dropCollection('accounts',function(err,result) {
+        console.log('  collection dropped with result: '+JSON.stringify(result));
     });
 };
 
@@ -39,4 +60,4 @@ module.exports.saveCatalog = function(data) {
     new_catalog.save(function(err,a) {
         console.log('saved catalog entry: '+JSON.stringify(a));
     });
-}
+};

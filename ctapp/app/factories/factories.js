@@ -61,6 +61,41 @@ angular.module('fsApp.common.models', [])
 
             return new_account.account_id;
         };
+        service.getAccountDetails = function(account_id) {
+            var account;
+
+            if (accounts.length>0) {
+                accounts.forEach(function(a) {
+                    if (account_id== a.account_id) account = a;
+                    console.log(' match');
+                });
+            }
+            return account;
+        };
+        service.updateAccount = function (account_id,name, type, balance, balance_date) {
+            if (verbose>=2) console.log('LedgerFactory.updateAccount()');
+
+            var new_account = {
+                account_id: account_id,
+                name: name,
+                type: type,
+                balance: balance,
+                balance_date: balance_date
+            };
+
+            var i;
+            for (i=0;i<accounts.length;i++) {
+                if (accounts[i].account_id==account_id) {
+                    accounts[i] = new_account;
+                    i=accounts.length;
+                }
+            }
+
+            // update initial balance
+            service.updateOpeningBalance(new_account.account_id, balance, balance_date);
+
+            return new_account.account_id;
+        };
         service.getAccountCount = function () {
             return accounts.length;
         };
@@ -117,6 +152,14 @@ angular.module('fsApp.common.models', [])
             ledger.push(new_journal_entry);
 
             return new_journal_entry.journal_entry_id;
+        };
+        service.updateOpeningBalance = function(account_id,balance,balance_date) {
+            if (verbose>=2) console.log('LedgerFactory.updateOpeningBalance()');
+            var l = service.getJournalEntries(account_id);
+
+            l[0].balance = balance;
+            l[0].amount = balance;
+            l[0].balance_date = balance_date;
         };
         service.getLedgerCount = function () {
             if (verbose>=3) console.log('ledger size='+ledgers.length)
