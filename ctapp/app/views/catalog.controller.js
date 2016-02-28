@@ -64,6 +64,7 @@ LedgerFactory) {
         .success(function(data) {
             CatalogFactory.setCatalogEntries(data);
             $scope.catalogEntries = CatalogFactory.getCatalogEntries();
+            $scope.catalogEntryCount = CatalogFactory.getCatalogEntryCount();
         })
         .error(function(err) {
             console.log('  error getting catalog: '+ err);
