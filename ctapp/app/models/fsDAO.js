@@ -4,6 +4,14 @@ var mongoose = require('mongoose');
 var models = require('./fsmodels');
 var verbose = 3;
 
+mongoose.connect('mongodb://localhost/fs');
+
+var db = mongoose.connection;
+db.on('error',console.error.bind(console,'connection error: '));
+db.once('open', function() {
+    console.log('database connected.');
+});
+
 module.exports.saveAccount = function(data) {
     var new_account = new models.Account( {
         user_id: data.user_id,
@@ -14,9 +22,13 @@ module.exports.saveAccount = function(data) {
         balance_date: data.balance_date
     });
 
-    new_account.save(function(err,a) {
-        console.log('saved account: '+JSON.stringify(a));
+    new_account.save().then(function(a) {
+        console.log('  saved account: '+JSON.stringify(a));
+        return a;
     });
+    //new_account.save(function(err,a) {
+    //    console.log('saved account: '+JSON.stringify(a));
+    //});
 };
 module.exports.updateAccount = function(data) {
     if (verbose>=2) console.log('fsDAO.updateAccount()');

@@ -7,8 +7,11 @@ module.exports = function(config) {
             { pattern: 'bower_components/angular/angular.js', watched: false },
             'bower_components/angular-mocks/angular-mocks.js',
             'bower_components/angular-resource/angular-resource.js',
-            { pattern: 'ctapp/app/**/*.js'},
+            'ctapp/app/app.js',
+            { pattern: 'ctapp/app/views/**/*.js'},
+            { pattern: 'ctapp/app/factories/**/*.js'},
             { pattern: 'ctapp/test/**/*.js' }
+
         ]
     });
 };
