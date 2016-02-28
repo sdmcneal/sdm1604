@@ -57,6 +57,18 @@ LedgerFactory) {
 
         clearForm();
     };
+    $scope.getAllCatalogEntries = function() {
+        if (verbose>=2) console.log('CatalogController.getAllCatalogEntries()');
+        
+        $http.get('/api/getallcatalogentries')
+        .success(function(data) {
+            CatalogFactory.setCatalogEntries(data);
+            $scope.catalogEntries = CatalogFactory.getCatalogEntries();
+        })
+        .error(function(err) {
+            console.log('  error getting catalog: '+ err);
+        });
+    };
    
    
 });

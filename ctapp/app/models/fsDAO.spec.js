@@ -1,6 +1,8 @@
-//var dao = require('./fsDAO');
+var dao = require('./fsDAO');
+var expect = require('expect.js');
+var models = require('./fsmodels');
 
-xdescribe('fsDAO', function() {
+describe('fsDAO', function() {
     it('create account', function() {
         var new_account = new models.Account( {
             user_id: 4500,

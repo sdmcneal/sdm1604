@@ -32,9 +32,17 @@ router.get('/dropallaccounts', function(req,res) {
 
 router.put('/savecatalog', function(req,res) {
     console.log('  req.body='+ JSON.stringify(req.body));
-    dao.saveCatalog(req.body);
+    dao.saveCatalog(req.body).then( function(a) {
+        console.log('  api saved catalog:'+JSON.stringify(a));
+        res.send('save catalog');
+    });
 
-    res.send('save catalog');
+    
+});
+router.get('/getallcatalogentries', function(req,res) {
+    dao.getAllCatalogEntries().then( function(list) {
+        res.send(list);
+    });
 });
 
 module.exports = router;

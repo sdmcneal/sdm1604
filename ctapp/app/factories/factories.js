@@ -648,6 +648,9 @@ angular.module('fsApp.common.models', [])
         service.getCatalogEntries = function () {
             return catalog_entries;
         };
+        service.setCatalogEntries = function (list) {
+          catalog_entries = list;
+        };
 
         return service;
     })
