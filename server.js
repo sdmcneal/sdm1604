@@ -7,7 +7,7 @@ var http = require('http');
 var path = require('path');
 var async = require('async');
 var express = require('express');
-var apirouter = require('./ctapp/app/api/api.router');
+var apirouter = require('./api/api.router.js');
 
 var verbose = true;
 //

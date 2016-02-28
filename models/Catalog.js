@@ -3,17 +3,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var AccountSchema = new Schema( {
-    user_id: Number,
-    account_id: Number,
-    name: String,
-    type: String,
-    balance: Number,
-    balance_date: Date
-});
-
-module.exports.Account = mongoose.model('Account',AccountSchema);
-
 var CatalogSchema = new Schema( {
     catalog_entry_id: Number,
     parent_catalog_entry_id: Number,
@@ -31,5 +20,4 @@ var CatalogSchema = new Schema( {
     end_date: Date
 });
 
-module.exports.Catalog = mongoose.model('Catalog',CatalogSchema);
-
+module.exports = mongoose.model('Catalog',CatalogSchema);
