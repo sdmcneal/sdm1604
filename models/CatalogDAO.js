@@ -57,6 +57,7 @@ module.exports.saveCatalog = function(data) {
     var defered = q.defer();
 
     var new_catalog = new Catalog( {
+        user_id: data.user_id,
         catalog_entry_id: data.catalog_entry_id,
         parent_catalog_entry_id: data.parent_catalog_entry_id,
         account_id: data.account_id,
@@ -80,12 +81,12 @@ module.exports.saveCatalog = function(data) {
 
     return defered.promise;
 };
-module.exports.getAllCatalogEntries = function() {
+module.exports.getAllCatalogEntries = function(user_id) {
     if (verbose>=2) console.log('fsDAO.getAllCatalogEntries()');
 
-    var defer = q.defer()
+    var defer = q.defer();
 
-    Catalog.find({},function(err,list) {
+    Catalog.find({user_id:user_id},function(err,list) {
         if (err) {
             defer.reject(err);
         } else {

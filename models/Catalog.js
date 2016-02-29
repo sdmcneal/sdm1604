@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var CatalogSchema = new Schema( {
+    user_id: Number,
     catalog_entry_id: Number,
     parent_catalog_entry_id: Number,
     account_id: Number,

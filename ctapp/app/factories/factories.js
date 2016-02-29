@@ -12,7 +12,6 @@ angular.module('fsApp.common.models', [])
             }
         };
     })
-
     .factory('MapFactory', function () {
         return {
             map: '',
@@ -22,7 +21,6 @@ angular.module('fsApp.common.models', [])
             }
         };
     })
-
     .factory('LedgerFactory', function (ConstantsFactory) {
         var verbose = 1; // 1=error only, 2=init/tracer, 3=debug
         var ledgers = [];
@@ -201,7 +199,6 @@ angular.module('fsApp.common.models', [])
 
         return service;
     })
-
     .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine,LedgerFactory) {
         var verbose = 1;
         var schedule_entries = [];
@@ -356,7 +353,6 @@ angular.module('fsApp.common.models', [])
 
         return service;
     })
-
     .factory('ConstantsFactory', function () {
         var constants = {};
         var verbose = 1;
@@ -407,7 +403,6 @@ angular.module('fsApp.common.models', [])
 
         return constants;
     })
-
     .factory('CalculationEngine', function (ConstantsFactory) {
         var verbose = 1;
         var service = {};
@@ -568,7 +563,6 @@ angular.module('fsApp.common.models', [])
         }
         return service;
     })
-
     .factory('CatalogFactory', function (ScheduleFactory, ConstantsFactory, CalculationEngine) {
         var verbose = 1;
         var catalog_entries = [];
@@ -654,7 +648,6 @@ angular.module('fsApp.common.models', [])
 
         return service;
     })
-
     .factory('AccountFactory', function (ConstantsFactory, LedgerFactory) {
         var verbose = 1;
         var accounts = [];
@@ -700,12 +693,13 @@ angular.module('fsApp.common.models', [])
 
         return service;
     })
-
     .factory('UserFactory', function (ConstantsFactory) {
         var verbose = 1;
         var users = [];
         var service = {};
         var next_user_id;
+        // TODO: modify for dynamic user administration
+
 
         init();
 
@@ -713,7 +707,9 @@ angular.module('fsApp.common.models', [])
             if (verbose>=2) console.log("UserFactory.init()");
             next_user_id = ConstantsFactory.FIRST_USER_ID;
         };
-
+        service.getCurrentUser = function() {
+            return 2929;
+        };
         service.addUser = function (name) {
             if (verbose>=2) console.log('UserFactory.addUser()');
 
@@ -726,15 +722,12 @@ angular.module('fsApp.common.models', [])
 
             return new_user.user_id;
         };
-
         service.getUserCount = function () {
             return users.length;
         };
-
         service.getUserList = function () {
             return users;
         };
-
         return service;
 
     });
