@@ -587,6 +587,7 @@ angular.module('fsApp.common.models', [])
             if (verbose>=2) console.log('CatalogFactory.addCatalogEntry()');
 
             var new_catalog_entry = {
+                user_id: form.user_id,
                 catalog_entry_id: next_catalog_entry_id++,
                 parent_catalog_entry_id: form.parent_catalog_entry_id,
                 account_id: form.account_id,
