@@ -7,6 +7,7 @@ var CatalogSchema = new Schema( {
     user_id: Number,
     catalog_entry_id: Number,
     parent_catalog_entry_id: Number,
+    catalog_entry_type: String,
     account_id: Number,
     paired_account_id: Number,
     description: String,

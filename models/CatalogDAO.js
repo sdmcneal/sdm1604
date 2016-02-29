@@ -14,9 +14,11 @@ module.exports.updateCatalog = function(data) {
         if (err) {
             deferred.reject(err);
         } else {
+
             doc.parent_catalog_entry_id = data.parent_catalog_entry_id;
             doc.account_id = data.account_id;
             doc.paired_account_id = data.paired_account_id;
+            doc.catalog_entry_type = data.catalog_entry_type;
             doc.description = data.description;
             doc.frequency = data.frequency;
             doc.frequency_param = data.frequency_param;
@@ -54,6 +56,8 @@ module.exports.dropAllCatalogs = function() {
 };
 
 module.exports.saveCatalog = function(data) {
+    if (verbose>=2) console.log('CatalogDAO.saveCatalog()');
+    if (verbose>=3) console.log('  data passed: '+JSON.stringify(data));
     var defered = q.defer();
 
     var new_catalog = new Catalog( {
@@ -61,6 +65,7 @@ module.exports.saveCatalog = function(data) {
         catalog_entry_id: data.catalog_entry_id,
         parent_catalog_entry_id: data.parent_catalog_entry_id,
         account_id: data.account_id,
+        catalog_entry_type: data.catalog_entry_type,
         paired_account_id: data.paired_account_id,
         description: data.description,
         frequency: data.frequency,

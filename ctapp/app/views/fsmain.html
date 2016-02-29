@@ -1,26 +1,8 @@
 <div>
-  <h2>Users:</h2>
-  <code>user count = {{user_count}}</code>
-  <div class="container">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>User ID</th>
-          <th>Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="u in user_list">
-          <td>{{u.user_id}}</td>
-          <td>{{u.name}}</td>
-      </tbody>
-    </table>
-  </div>
-  
 
-  
   <h2>Run the schedule</h2>
   
   <button class="btn btn-primary" ng-click="createMocks()">Build mock data</button>
+  <button class="btn btn-primary" ng-click="loadFromDatabase()">Load from database</button>
     
 </div>

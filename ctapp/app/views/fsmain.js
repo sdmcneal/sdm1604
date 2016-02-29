@@ -1,4 +1,4 @@
-app.controller('FSMainController', function($scope, UserFactory,
+app.controller('FSMainController', function($scope, $http, $q, UserFactory,
   LedgerFactory, CatalogFactory, ScheduleFactory, ConstantsFactory) {
   var fsuser;
   var verbose = 3;
@@ -85,7 +85,7 @@ app.controller('FSMainController', function($scope, UserFactory,
       param2: '',
       tax_year_maximum: ''
     }
-    var interest_id = CatalogFactory.addCatalogEntry(catalog_entry4);
+    var interest2_id = CatalogFactory.addCatalogEntry(catalog_entry4);
   };
 
   $scope.user_count = UserFactory.getUserCount();
@@ -118,4 +118,35 @@ app.controller('FSMainController', function($scope, UserFactory,
   $scope.getLedger = function(account_id) {
     return fsuser.models[0].getLedger(account_id);
   };
+    $scope.loadFromDatabase = function(user_id) {
+        if (verbose>=2) console.log('FSMainController.loadFromDatabase()');
+
+
+        // load accounts
+        $q.all([
+            $http.get('/api/getallaccounts/'+UserFactory.getCurrentUser())
+                .then(loadAccounts),
+            $http.get('/api/getallcatalogentries/'+UserFactory.getCurrentUser())
+            .then(loadCatalogEntries)
+        ]).then(function() {
+            // run schedule and generate ledgers
+        });
+    };
+    function loadAccounts(accounts) {
+        if (verbose>=2) console.log('FSMainController.loadAccounts()');
+        if(verbose>=3) console.log('  accounts returned: '+JSON.stringify(accounts.data));
+        var i;
+
+        for (i=0;i<accounts.data.length;i++) {
+            LedgerFactory.addAccount(accounts.data[i]);
+        }
+    }
+    function loadCatalogEntries(entries) {
+        if (verbose>=2) console.log('FSMainController.loadCatalogEntries()');
+        if (verbose>=3) console.log('  entries returned: '+JSON.stringify(entries.data));
+
+        entries.data.forEach(function(entry) {
+            CatalogFactory.addCatalogEntry(entry);
+        });
+    }
 });

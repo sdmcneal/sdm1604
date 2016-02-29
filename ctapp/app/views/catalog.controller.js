@@ -3,8 +3,9 @@
 angular.module('fsApp.views.catalog',['fsApp.common.models'])
 
 .controller('CatalogController',function($scope,$http,CatalogFactory,ScheduleFactory,ConstantsFactory,
-LedgerFactory) {
+LedgerFactory,UserFactory) {
    var verbose = true;
+    var user_id;
 
    
    init();
@@ -15,10 +16,12 @@ LedgerFactory) {
        $scope.frequency_options = ConstantsFactory.FREQUENCY_LIST;
        $scope.account_options = LedgerFactory.getAccountList();
        $scope.type_options = ConstantsFactory.TYPE_LIST;
+       user_id = UserFactory.getCurrentUser();
    }
 
     function clearForm() {
         $scope.catalog_form = {
+            user_id: user_id,
             description: '',
             parent_id: '',
             catalog_entry_type: ConstantsFactory.FIXED,
@@ -45,6 +48,7 @@ LedgerFactory) {
         
         var form = $scope.catalog_form;
 
+       form.user_id = UserFactory.getCurrentUser();
         form.catalog_entry_id = CatalogFactory.addCatalogEntry($scope.catalog_form);
 
         $http.put('/api/savecatalog',form)

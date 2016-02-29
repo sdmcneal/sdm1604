@@ -24,6 +24,11 @@ router.put('/updateaccount', function(req,res) {
 
     res.send('update account');
 });
+router.get('/getallaccounts/:user_id', function(req,res) {
+    accountdao.getAllAccounts(req.params.user_id).then( function(list) {
+        res.send(list);
+    });
+});
 
 router.get('/dropallaccounts', function(req,res) {
     console.log('  req.body='+ JSON.stringify(req.body));
@@ -41,8 +46,8 @@ router.put('/savecatalog', function(req,res) {
 
     
 });
-router.get('/getallcatalogentries', function(req,res) {
-    catalogdao.getAllCatalogEntries().then( function(list) {
+router.get('/getallcatalogentries/:user_id', function(req,res) {
+    catalogdao.getAllCatalogEntries(req.params.user_id).then( function(list) {
         res.send(list);
     });
 });

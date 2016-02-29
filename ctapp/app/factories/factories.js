@@ -38,24 +38,29 @@ angular.module('fsApp.common.models', [])
             next_account_id = ConstantsFactory.FIRST_ACCOUNT_ID;
         }
 
-        service.addAccount = function (name, type, balance, balance_date) {
+        service.addAccount = function (form) {
             if (verbose>=2) console.log('LedgerFactory.addAccount()');
 
             var new_account = {
-                account_id: next_account_id++,
-                name: name,
-                type: type,
-                balance: balance,
-                balance_date: balance_date
+
+                name: form.name,
+                type: form.type,
+                balance: form.balance,
+                balance_date: new Date(form.balance_date)
             };
+            if (form.account_id === undefined) {
+                new_account.account_id = next_account_id++;
+            } else {
+                new_account.account_id = form.account_id;
+            }
 
             accounts.push(new_account);
 
             service.addLedger(new_account.account_id);
 
             // add initial balance
-            service.addJournalEntry(new_account.account_id, balance_date, null,
-                ConstantsFactory.OPENING_BALANCE, balance);
+            service.addJournalEntry(new_account.account_id, form.balance_date, null,
+                ConstantsFactory.OPENING_BALANCE, form.balance);
 
             return new_account.account_id;
         };
@@ -385,7 +390,7 @@ angular.module('fsApp.common.models', [])
 
             constants.FIXED = "fixed";
             constants.TYPE_INTEREST_ON_BALANCE = "interest on balance";
-            constants.TYPE_LOAN_PAYMENT = "loan payment",
+            constants.TYPE_LOAN_PAYMENT = "loan payment";
             constants.TYPE_ESCALATING = "fixed escalating";
 
             constants.TYPE_LIST = [
@@ -478,12 +483,13 @@ angular.module('fsApp.common.models', [])
             else {
                 // if start date is before opening date..
                 if ((catalog_entry_start_date == null) || (catalog_entry_start_date < ledger_balance_date)) {
-                    current_date = ledger_balance_date;
+                    current_date = new Date(ledger_balance_date);
                 }
                 else {
-                    current_date = catalog_entry_start_date;
+                    current_date = new Date(catalog_entry_start_date);
                 }
                 // set day of month
+                //console.log('  current_date='+JSON.stringify(current_date));
                 if (current_date.getDate() > day_of_month) {
                     // set to next month
                     current_date.setMonth(current_date.getMonth() + 1);
@@ -582,7 +588,7 @@ angular.module('fsApp.common.models', [])
 
             var new_catalog_entry = {
                 user_id: form.user_id,
-                catalog_entry_id: next_catalog_entry_id++,
+
                 parent_catalog_entry_id: form.parent_catalog_entry_id,
                 account_id: form.account_id,
                 paired_account_id: form.paired_account_id,
@@ -596,12 +602,19 @@ angular.module('fsApp.common.models', [])
                 param2: form.param2,
                 tax_year_maximum: form.tax_year_maximum
             };
+
+            if (form.catalog_entry_id === undefined) {
+                new_catalog_entry.catalog_entry_id = next_catalog_entry_id++;
+            } else {
+                new_catalog_entry.catalog_entry_id = form.catalog_entry_id;
+            }
+
             if (form.start_date)
-                new_catalog_entry.start_date = form.start_date;
+                new_catalog_entry.start_date = new Date(form.start_date);
             else
                 new_catalog_entry.start_date = new Date();
             if (form.end_date) {
-                new_catalog_entry.end_date = form.end_date;
+                new_catalog_entry.end_date = new Date(form.end_date);
             }
             else {
                 new_catalog_entry.end_date = new Date();
@@ -709,7 +722,7 @@ angular.module('fsApp.common.models', [])
             next_user_id = ConstantsFactory.FIRST_USER_ID;
         };
         service.getCurrentUser = function() {
-            return 2929;
+            return 5000;
         };
         service.addUser = function (name) {
             if (verbose>=2) console.log('UserFactory.addUser()');
