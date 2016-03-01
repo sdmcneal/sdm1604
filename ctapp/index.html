@@ -12,6 +12,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
   <script type="text/javascript">
     function initMap() {
       console.log("initMap()");
@@ -28,6 +29,7 @@
   <script src="app/views/schedule.controller.js"></script>
   <script src="app/views/account.controller.js"></script>
   <script src="app/views/ledger.controller.js"></script>
+  <script src="app/views/chart.controller.js"></script>
   <script src="app/mapview/mapview.js"></script>
   <script src="app/factories/factories.js"></script>
   <script src="app/controllers/controllers.js"></script>
@@ -46,13 +48,14 @@
         <li><a ui-sref="schedule">FS Schedule</a></li>
         <li><a ui-sref="ledger">FS Ledgers</a></li>
         <li><a ui-sref="account">FS Accounts</a></li>
+        <li><a ui-sref="chart">FS Charts</a></li>
       </ul>
     </nav>
 
     <div ui-view></div>
 
   </div>
-  <div>Build create-fs 13</div>
+  <div>Build intro-highchart 1</div>
 </body>
 
 </html>

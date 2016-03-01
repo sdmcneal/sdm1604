@@ -4,6 +4,7 @@ var app = angular.module('CommuteTracerApp', [
     'fsApp.common.models',
     'fsApp.views.ledger',
     'fsApp.views.catalog',
+    'fsApp.views.chart',
     'ui.router'
 ]);
 
@@ -46,6 +47,11 @@ app.config(
                 url: '/account',
                 controller: 'AccountCtrl',
                 templateUrl: 'app/views/account.html'
+            })
+            .state('chart', {
+                url: '/chart',
+                controller: 'ChartController',
+                templateUrl: 'app/views/chart.html'
             })
             .state('map', {
                 url: '/map',
