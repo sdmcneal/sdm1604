@@ -44,7 +44,7 @@ xdescribe("fsApp.common.models::CatalogFactory", function () {
 
 });
 
-describe("fsApp.common.models::ScheduleFactory", function () {
+xdescribe("fsApp.common.models::ScheduleFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
@@ -64,7 +64,6 @@ describe("fsApp.common.models::ScheduleFactory", function () {
         expect(catalog_factory).toBeDefined();
         expect(ledger_factory).toBeDefined();
     });
-
 
     describe("generateJournalEntriesForLoanPayment()", function () {
         var checking_id, loan_id, schedule_form, start_date, end_date, loan_payment, monthly_interest,
@@ -148,7 +147,7 @@ describe("fsApp.common.models::ScheduleFactory", function () {
 
 });
 
-xdescribe("fsApp.common.models::LedgerFactory", function () {
+describe("fsApp.common.models::LedgerFactory", function () {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;
@@ -258,7 +257,40 @@ xdescribe("fsApp.common.models::LedgerFactory", function () {
             expect(balance_after_first_calc).toEqual(1000.0 * 1.01 * 1.01);
         });
     });
+    describe("getMonthEndBalances()", function() {
+        var balance_date, checking_id, range_start, range_end, result;
 
+        beforeEach(function () {
+            console.log('beforeEach()');
+            balance_date = new Date(2016, 1, 2);
+            checking_id = ledger_factory.addAccount(
+                {
+                    name: "Checking",
+                    type: "Liquid",
+                    balance: 1000.0,
+                    balance_date: balance_date
+                });
+            range_start = new Date(2016,1,2);
+            range_end = new Date(2016,5,2);
+            ledger_factory.addJournalEntry(checking_id,new Date(2016,1,18),1,"Feb entry",100.0);
+            ledger_factory.addJournalEntry(checking_id,new Date(2016,2,18),1,"Mar entry",100.0);
+            ledger_factory.addJournalEntry(checking_id,new Date(2016,3,18),1,"Apr entry",100.0);
+            ledger_factory.addJournalEntry(checking_id,new Date(2016,4,18),1,"May entry",100.0);
+            result = ledger_factory.getMonthEndBalances(checking_id,range_start,range_end);
+        });
+        it("should have 4 month end results", function() {
+            expect(result.labels.length).toEqual(4);
+        });
+        it("should have last entry as 1400", function() {
+            expect(result.data[3]).toEqual(1400);
+        });
+        it("should not error with period with no journal entries", function() {
+            range_end = new Date(2016,8,2);
+            result = ledger_factory.getMonthEndBalances(checking_id,range_start,range_end);
+            expect(result.labels.length).toEqual(7);
+            expect(result.data[6]).toEqual(1400);
+        });
+    });
 });
 
 xdescribe("Common models", function () {

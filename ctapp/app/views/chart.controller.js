@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('fsApp.views.chart', [])
+angular.module('fsApp.views.chart', ['fsApp.common.models'])
     .directive('hcChart', function () {
         return {
             restrict: 'E',
@@ -46,20 +46,31 @@ angular.module('fsApp.views.chart', [])
             }
         };
     })
-    .controller('ChartController', function ($scope) {
+    .controller('ChartController', function ($scope,LedgerFactory) {
+        $scope.thelabels = ['1','2','3'];
+        $scope.thedata= [100,200,150];
 
+        $scope.drawLedger = function() {
+            var accounts = LedgerFactory.getAccountList();
+            var result = LedgerFactory.getMonthEndBalances(accounts[0].account_id);
+
+            $scope.thelabels = result.labels;
+            $scope.thedata = result.data;
+            
+
+        };
         // Sample options for first chart
         $scope.chartOptions = {
             title: {
                 text: 'Temperature data'
             },
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                categories: $scope.thelabels
             },
 
             series: [{
-                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                name: 'Account 1',
+                data: $scope.thedata
             }]
         };
 

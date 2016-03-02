@@ -21,8 +21,8 @@ angular.module('fsApp.common.models', [])
             }
         };
     })
-    .factory('LedgerFactory', function (ConstantsFactory) {
-        var verbose = 1; // 1=error only, 2=init/tracer, 3=debug
+    .factory('LedgerFactory', function (ConstantsFactory,CalculationEngine) {
+        var verbose = 2; // 1=error only, 2=init/tracer, 3=debug
         var ledgers = [];
         var accounts = [];
         var account_ids = [];
@@ -38,6 +38,40 @@ angular.module('fsApp.common.models', [])
             next_account_id = ConstantsFactory.FIRST_ACCOUNT_ID;
         }
 
+        service.getMonthEndBalances = function(account_id,start_date,end_date) {
+            if (verbose>=2) console.log('LedgerFactory.getMonthEndBalances()');
+            var result = {
+                labels: [],
+                data: []
+            };
+            var month_end_dates = CalculationEngine.calculateLastDayOfMonths(start_date,end_date,start_date);
+            var ledger = service.getJournalEntries(account_id);
+
+            var i,j=1;
+            var previous_je_date = ledger[0].balance_date;
+            var previous_je_balance = ledger[0].balance;
+            var current_je_date;
+            var current_month_end;
+
+            for (i=0;i<month_end_dates.length;i++) {
+                current_je_date = ledger[j].balance_date;
+                current_month_end = month_end_dates[i];
+
+                while (current_month_end<current_je_date) {
+                    previous_je_balance = ledger[j].balance;
+                    previous_je_date = ledger[j].balance_date;
+                    if (j<(ledger.length-1)) j++;
+                    current_je_date = ledger[j].balance_date;
+                }
+
+                result.labels.push(current_month_end.getMonth());
+                result.data.push(ledger[j].balance);
+                if (j<(ledger.length-1)) j++;
+
+            }
+            if (verbose>=3) console.log('  result: '+JSON.stringify(result));
+            return result;
+        };
         service.addAccount = function (form) {
             if (verbose>=2) console.log('LedgerFactory.addAccount()');
 
