@@ -56,7 +56,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
 
             $scope.thelabels = result.labels;
             $scope.thedata = result.data;
-            
+
 
         };
         // Sample options for first chart
