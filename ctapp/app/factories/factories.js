@@ -405,6 +405,7 @@ angular.module('fsApp.common.models', [])
             constants.FIRST_CATALOG_ENTRY_ID = 30000;
             constants.FIRST_SCHEDULE_ENTRY_ID = 40000;
             constants.FIRST_JOURNAL_ENTRY_ID = 50000;
+            constants.FIRST_FINANCIAL_MODEL_ID = 60000;
 
             constants.FREQ_MONTHLY = "monthly";
             constants.FREQ_FIRST_DAY_OF_MONTH = "first day each month";
