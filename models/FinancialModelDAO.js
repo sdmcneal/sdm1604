@@ -28,10 +28,57 @@ module.exports.saveFinancialModel = function(data) {
         }
     });
 
-    return defer;
+    return defer.promise;
 };
+module.exports.updateFinancialModel = function(data) {
+    if (verbose>=2) console.log('FinancialModelDAO.updateFinancialModel()');
+    var defer = q.defer();
 
-module.exports.getAllModels = function(user_id) {
+    FinancialModel.findOne({user_id: data.user_id, model_id: data.model_id}, function (err, doc) {
+        if (err) {
+            defer.reject(err);
+        } else {
+            doc.model_name= data.model_name;
+            doc.active_flag= data.active_flag;
+            doc.save(function(err,a) {
+                if (err) {
+                    defer.reject(err);
+                } else {
+                    defer.resolve(a);
+                }
+            });
+        }
+    });
+    return defer.promise;
+};
+module.exports.getFinancialModel = function(data) {
+    if (verbose>=2) console.log('FinancialModelDAO.updateFinancialModel()');
+    var defer = q.defer();
+
+    FinancialModel.findOne({user_id: data.user_id, model_id: data.model_id}, function (err, doc) {
+        if (err) {
+            defer.reject(err);
+        } else {
+            defer.resolve(doc);
+        }
+    });
+    return defer.promise;
+};
+module.exports.removeFinancialModel = function(data) {
+    if (verbose>=2) console.log('FinancialModelDAO.removeFinancialModel()');
+    var defer = q.defer();
+
+    FinancialModel.remove({user_id: data.user_id, model_id: data.model_id}, function(err,a) {
+        if (err) {
+            defer.reject(err);
+        } else {
+            defer.resolve(a);
+        }
+    });
+
+    return defer.promise;
+};
+module.exports.getAllFinancialModels = function(user_id) {
     if (verbose>=2) console.log('FinancialModelDAO.getAllModels()');
 
     var defer = q.defer();
@@ -45,7 +92,18 @@ module.exports.getAllModels = function(user_id) {
         }
     });
 
-    return defer.promise();
+    return defer.promise;
 };
+module.exports.dropFinancialModels = function(user_id) {
+    var defer = q.defer();
 
+    FinancialModel.remove({user_id: user_id}, function (err,a) {
+        if (err) {
+            defer.reject(err);
+        } else {
+            defer.resolve(a);
+        }
+    });
+    return defer.promise;
+};
 
