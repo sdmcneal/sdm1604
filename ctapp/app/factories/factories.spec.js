@@ -293,7 +293,7 @@ describe("fsApp.common.models::LedgerFactory", function () {
     });
 });
 
-xdescribe("Common models", function () {
+describe("Common models", function () {
     beforeEach(function () {
         module('fsApp.common.models');
     });
@@ -315,6 +315,11 @@ xdescribe("Common models", function () {
         expect(constants_factory.FIRST_ACCOUNT_ID).toEqual(20000);
     });
 
+    it('should return the right month and year text string', function() {
+        var date = new Date(2016,1,13);
+        
+        expect(calculation_engine.getYearMonthText(date)).toEqual("Feb 2016");
+    })
     xdescribe("Date calculations", function () {
         it("should return first day in month", function () {
             var d1 = new Date(2016, 5, 5),
@@ -429,7 +434,12 @@ xdescribe("Common models", function () {
             expect(ledger_factory).toBeDefined();
         });
         it("schedule fixed catalog entry and open balance", function () {
-            var account = ledger_factory.addAccount("Checking", "Cash", 1000.0, new Date(2016, 1, 14));
+            var account = ledger_factory.addAccount({
+                user_id: 5000,
+                name: "Checking", 
+                type: "Cash", 
+                balance: 1000.0, 
+                balance_date: new Date(2016, 1, 14)});
             expect(account).toBeDefined();
 
             var ledger = ledger_factory.getJournalEntries(account);

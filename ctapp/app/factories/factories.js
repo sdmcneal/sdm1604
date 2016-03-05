@@ -547,6 +547,13 @@ angular.module('fsApp.common.models', [])
             return schedule_dates;
 
         };
+        service.getYearMonthText = function(date) {
+          var months = [ "Jan", "Feb", "Mar", "Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          
+          var result = months[date.getMonth()] + " " + date.getFullYear();
+          
+          return result;
+        }
         // first day
         // first weekday
         // every x weeks
