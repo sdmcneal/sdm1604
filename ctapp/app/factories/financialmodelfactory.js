@@ -2,7 +2,7 @@
 
 angular.module('fsApp.common.models')
 .factory('FinancialModelFactory', function(ConstantsFactory,UserFactory) {
-    var verbose = 3;
+    var verbose = 1;
     var models=[];
     var service={};
     var next_financial_model_id;
@@ -52,5 +52,8 @@ angular.module('fsApp.common.models')
     service.getAllFinancialModels = function() {
         return models;
     };
+    service.setAllFinancialModels = function(data) {
+        models = data;
+    }
     return service;
 });

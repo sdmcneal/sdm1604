@@ -3,7 +3,7 @@
 var db = require('./DbConnection');
 var FinancialModel = require('./FinancialModel');
 var q = require('q');
-var verbose = 3;
+var verbose = 1;
 
 module.exports.saveFinancialModel = function(data) {
     if (verbose>=2) console.log('FinancialModelDAO.saveFinancialModel()');
@@ -42,6 +42,7 @@ module.exports.updateFinancialModel = function(data) {
             doc.active_flag= data.active_flag;
             doc.save(function(err,a) {
                 if (err) {
+                    if (verbose>=1) console.log('  update error: '+err);
                     defer.reject(err);
                 } else {
                     defer.resolve(a);
@@ -52,11 +53,12 @@ module.exports.updateFinancialModel = function(data) {
     return defer.promise;
 };
 module.exports.getFinancialModel = function(data) {
-    if (verbose>=2) console.log('FinancialModelDAO.updateFinancialModel()');
+    if (verbose>=2) console.log('FinancialModelDAO.getFinancialModel()');
     var defer = q.defer();
 
     FinancialModel.findOne({user_id: data.user_id, model_id: data.model_id}, function (err, doc) {
         if (err) {
+            if (verbose>=1) console.log('  get error: '+err);
             defer.reject(err);
         } else {
             defer.resolve(doc);
@@ -78,13 +80,14 @@ module.exports.removeFinancialModel = function(data) {
 
     return defer.promise;
 };
-module.exports.getAllFinancialModels = function(user_id) {
-    if (verbose>=2) console.log('FinancialModelDAO.getAllModels()');
+module.exports.getAllFinancialModels = function(params) {
+    if (verbose>=2) console.log('FinancialModelDAO.getAllFinancialModels()');
 
     var defer = q.defer();
 
-    FinancialModel.find({user_id: user_id, active_flag: true}, function (err,list){
+    FinancialModel.find({user_id: params.user_id, active_flag: true}, function (err,list){
         if (err) {
+            if (verbose>=1) console.log('  error: '+err);
             defer.reject(err);
         } else {
             if (verbose>=3) console.log('  find returned: '+JSON.stringify(list));
@@ -99,6 +102,7 @@ module.exports.dropFinancialModels = function(user_id) {
 
     FinancialModel.remove({user_id: user_id}, function (err,a) {
         if (err) {
+            if (verbose>=1) console.log('  error: '+err)
             defer.reject(err);
         } else {
             defer.resolve(a);

@@ -60,8 +60,11 @@ router.get('/getfinancialmodel/:user_id/:model_id', function (req,res) {
         });
 });
 router.get('/getallfinancialmodels/:user_id', function (req,res) {
-    modeldao.getAllFinancialModels({user_id: req.params.user_id})
+    var user_id = Number(req.params.user_id);
+    console.log('  user_id: '+user_id);
+    modeldao.getAllFinancialModels({user_id: user_id})
         .then(function(list) {
+            console.log(' results:'+JSON.stringify(list));
             res.send(list);
         })
         .fail(function(err) {

@@ -5,6 +5,7 @@ var app = angular.module('CommuteTracerApp', [
     'fsApp.views.ledger',
     'fsApp.views.catalog',
     'fsApp.views.chart',
+    'fsApp.views.FinancialModel',
     'ui.router'
 ]);
 
@@ -57,6 +58,11 @@ app.config(
                 url: '/map',
                 controller: 'MapController',
                 templateUrl: 'app/mapview/mapview.html'
+            })
+            .state('finmodel', {
+                url: '/finmodel',
+                controller: 'FinancialModelController',
+                templateUrl: 'app/views/financialmodel.html'
             });
 
     });
