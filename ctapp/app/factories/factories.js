@@ -86,6 +86,7 @@ angular.module('fsApp.common.models', [])
                 new_account.account_id = next_account_id++;
             } else {
                 new_account.account_id = form.account_id;
+                if (next_account_id<=form.account_id) next_account_id=form.account_id+1;
             }
 
             accounts.push(new_account);
@@ -652,6 +653,9 @@ angular.module('fsApp.common.models', [])
                 new_catalog_entry.catalog_entry_id = next_catalog_entry_id++;
             } else {
                 new_catalog_entry.catalog_entry_id = form.catalog_entry_id;
+                if (form.catalog_entry_id>=next_catalog_entry_id) {
+                  next_catalog_entry_id - form.catalog_entry_id+1;
+                }
             }
 
             if (form.start_date)
