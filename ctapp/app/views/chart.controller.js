@@ -1,7 +1,20 @@
 'use strict';
 
 angular.module('fsApp.views.chart', ['fsApp.common.models'])
-    .directive('hcChart', function () {
+.factory('chartService', function($rootScope) {
+    var service = {};
+    
+    service.chart = '';
+    
+    service.setChart = function(chart) {
+        service.chart = chart;
+    }
+    service.addSeries = function (series) {
+        service.chart.addSeries(series);
+    }
+    return service;
+})
+    .directive('hcChart', function (chartService) {
         return {
             restrict: 'E',
             template: '<div></div>',
@@ -9,55 +22,42 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
                 options: '='
             },
             link: function (scope, element) {
-                Highcharts.chart(element[0], scope.options);
-            }
-        };
-    })
-    .directive('hcPieChart', function () {
-        return {
-            restrict: 'E',
-            template: '<div></div>',
-            scope: {
-                title: '@',
-                data: '='
-            },
-            link: function (scope, element) {
-                Highcharts.chart(element[0], {
-                    chart: {
-                        type: 'pie'
-                    },
-                    title: {
-                        text: scope.title
-                    },
-                    plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: true,
-                                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                            }
-                        }
-                    },
-                    series: [{
-                        data: scope.data
-                    }]
+                init();
+                
+                function init() {
+                    var defaultOptions = {
+                        chart: { renderTo: element[0] }
+                    };
+                    var config = angular.extend(defaultOptions,scope.options);
+                    chartService.setChart( new Highcharts.chart(config) );
+                }
+                
+                scope.$watch("config.series", function(loading) {
+                    console.log('watch()'+JSON.stringify(scope.options));
+                    //chart.addSeries({ name: 'Account 2', data: [300,200,250]});
                 });
+                
             }
         };
     })
-    .controller('ChartController', function ($scope,LedgerFactory) {
-        $scope.thelabels = ['1','2','3'];
+    
+    .controller('ChartController', function ($scope,LedgerFactory,chartService) {
+        $scope.thelabels = ['Jan','Feb','Mar'];
         $scope.thedata= [100,200,150];
+        
+        init();
+        
+        function init() {
+            
+        }
 
         $scope.drawLedger = function() {
-            var accounts = LedgerFactory.getAccountList();
-            var result = LedgerFactory.getMonthEndBalances(accounts[0].account_id);
-
-            $scope.thelabels = result.labels;
-            $scope.thedata = result.data;
-
-
+            console.log('drawLedger()');
+            //var accounts = LedgerFactory.getAccountList();
+            //var result = LedgerFactory.getMonthEndBalances(accounts[0].account_id);
+            chartService.addSeries({ name: 'Account 2', data: [300,200,250]});
+            //$scope.chartOptions.series = [{ name: 'Account 2', data: [300,200,250]}];
+            console.log('chartOptions='+JSON.stringify($scope.chartOptions));
         };
         // Sample options for first chart
         $scope.chartOptions = {
@@ -74,26 +74,5 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
             }]
         };
 
-        // Sample data for pie chart
-        $scope.pieData = [{
-            name: "Microsoft Internet Explorer",
-            y: 56.33
-        }, {
-            name: "Chrome",
-            y: 24.03,
-            sliced: true,
-            selected: true
-        }, {
-            name: "Firefox",
-            y: 10.38
-        }, {
-            name: "Safari",
-            y: 4.77
-        }, {
-            name: "Opera",
-            y: 0.91
-        }, {
-            name: "Proprietary or Undetectable",
-            y: 0.2
-        }]
+        
     });

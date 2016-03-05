@@ -1,0 +1,39 @@
+<div>
+    <h2>Create Model</h2>
+    <div>
+        <form class="form-group">
+            Financial Model Name: <input type="text" class="form-control" 
+            ng-model="financial_form.model_name" required>
+            Active: <input type="checkbox" class="form-control" ng-model="financial_form.active_flag">
+            <button class="btn btn-primary" type="submit" ng-click="createFinancialModel()">
+                Create Financial Model
+            </button>
+        </form>
+    </div>
+    <h2>
+        Financial Models
+    </h2>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Model ID</th>
+                    <th>Name</th>
+                    <th>Created</th>
+                    <th>Active?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="u in financialModels">
+                    <td>{{u.model_id}}</td>
+                    <td>{{u.model_name}}</td>
+                    <td>{{u.create_date | date }}</td>
+                    <td>{{u.active_flag}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button class="btn btn-primary" ng-click="getAllFinancialModels()">Get Models</button>
+    </div>
+</div>
