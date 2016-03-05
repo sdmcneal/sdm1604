@@ -9,7 +9,8 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
     service.setChart = function(chart) {
         service.chart = chart;
     }
-    service.addSeries = function (series) {
+    service.addSeries = function (labels,series) {
+        service.chart.xAxis[0].setCategories(labels);
         service.chart.addSeries(series);
     }
     return service;
@@ -88,11 +89,12 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
             console.log('drawLedger()');
             var accounts = LedgerFactory.getAccountList();
             
-            var result = LedgerFactory.getMonthEndBalances(accounts[0].account_id,
-            $scope.start_date,$scope.end_date);
-            
-            chartService.addSeries({ name: 'Account 2', data: result.data});
-            
+            accounts.forEach(function (a) {
+                var result = LedgerFactory.getMonthEndBalances(a.account_id,
+                $scope.start_date,$scope.end_date);
+                
+                chartService.addSeries(result.labels,{ name: a.name, data: result.data});
+            });
             //$scope.chartOptions.series = [{ name: 'Account 2', data: [300,200,250]}];
             console.log('chartOptions='+JSON.stringify($scope.chartOptions));
         };

@@ -22,7 +22,7 @@ angular.module('fsApp.common.models', [])
         };
     })
     .factory('LedgerFactory', function (ConstantsFactory,CalculationEngine) {
-        var verbose = 2; // 1=error only, 2=init/tracer, 3=debug
+        var verbose = 1; // 1=error only, 2=init/tracer, 3=debug
         var ledgers = [];
         var accounts = [];
         var account_ids = [];
@@ -64,7 +64,7 @@ angular.module('fsApp.common.models', [])
                     current_je_date = ledger[j].balance_date;
                 }
 
-                result.labels.push(current_month_end.getMonth());
+                result.labels.push(CalculationEngine.getYearMonthText(current_month_end));
                 result.data.push(ledger[j].balance);
                 if (j<(ledger.length-1)) j++;
 
@@ -218,6 +218,9 @@ angular.module('fsApp.common.models', [])
                 }
             }
             if (verbose>=3) console.log('  returning journal entries: '+JSON.stringify(_journal_entries));
+            if (undefined === _journal_entries) {
+              if (verbose>=1) console.log(' error: no journal found for account: '+account_id);
+            }
             return _journal_entries;
         };
         service.getLastBalance = function (account_id) {

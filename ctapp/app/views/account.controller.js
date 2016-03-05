@@ -2,8 +2,9 @@
 
 angular.module('fsApp.views.ledger',['fsApp.common.models'])
 
-.controller('AccountCtrl', function($scope,$http,LedgerFactory) {
+.controller('AccountCtrl', function($scope,$http,LedgerFactory,UserFactory) {
    var verbose = 3;
+   
 
     init();
 
@@ -17,6 +18,7 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
     
     function clearForm() {
         $scope.account_form = {
+            user_id: UserFactory.getCurrentUser(),
             name: '',
             type: '',
             balance: 0.0,

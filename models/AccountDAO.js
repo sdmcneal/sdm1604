@@ -3,7 +3,7 @@
 var db = require('./DbConnection');
 var Account = require('./Account');
 var q = require('q');
-var verbose = 3;
+var verbose = 1;
 
 
 module.exports.saveAccount = function (data) {
@@ -73,6 +73,7 @@ module.exports.getAllAccounts = function(user_id) {
         if (err) {
             defer.reject(err);
         } else {
+            if (verbose>=3) console.log('  docs returned: '+JSON.stringify(docs));
             defer.resolve(docs);
         }
     });
