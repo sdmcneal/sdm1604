@@ -1,4 +1,13 @@
+<div>
+    <h1>Forecast Summary</h1>
+    <div ng-repeat="t in time_scales">
+        <button class="btn btn-info" ng-click="setTheTimeScale(t.id)">{{t.description}}</button>
+    </div>
+    <div>
+        Start Date: {{start_date | date}}  End Date: {{end_date | date}}
+    </div>
 <hc-chart options="chartOptions">Placeholder for generic chart</hc-chart>
 
 <button class="btn btn-primary" ng-click="drawLedger()">Draw Ledger Chart</button>
 
+</div>

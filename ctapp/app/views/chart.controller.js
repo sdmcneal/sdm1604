@@ -41,21 +41,58 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
         };
     })
     
-    .controller('ChartController', function ($scope,LedgerFactory,chartService) {
+    .controller('ChartController', function ($scope,LedgerFactory,chartService,
+    CalculationEngine) {
         $scope.thelabels = ['Jan','Feb','Mar'];
         $scope.thedata= [100,200,150];
+        $scope.time_scales = [];
+        
         
         init();
         
+        
+        $scope.setTheTimeScale = function(id) {
+            $scope.current_time_scale = id;
+            $scope.time_scales.forEach(function(s) {
+                if (s.id==id) {
+                    $scope.start_date = s.start_date;
+                    $scope.end_date = s.end_date;
+                }
+            });
+        };
         function init() {
+            var today = new Date();
+            var start_of_month = new Date(today.getFullYear(),today.getDate(),1);
+            $scope.time_scales = [{
+                id: 1,
+                description: "1 Month",
+                start_date: today,
+                end_date: CalculationEngine.addXMonthsTo(1,today)
+            },
+            {
+                id: 2,
+                description: "1 Year",
+                start_date: today,
+                end_date: CalculationEngine.addXMonthsTo(12,today)
+            },
+            {
+                id: 3,
+                description: "10 Years",
+                start_date: today,
+                end_date: CalculationEngine.addXMonthsTo(120,today)
+            }];
             
+           // $scope.setTheTimeScale(2);
         }
-
         $scope.drawLedger = function() {
             console.log('drawLedger()');
-            //var accounts = LedgerFactory.getAccountList();
-            //var result = LedgerFactory.getMonthEndBalances(accounts[0].account_id);
-            chartService.addSeries({ name: 'Account 2', data: [300,200,250]});
+            var accounts = LedgerFactory.getAccountList();
+            
+            var result = LedgerFactory.getMonthEndBalances(accounts[0].account_id,
+            $scope.start_date,$scope.end_date);
+            
+            chartService.addSeries({ name: 'Account 2', data: result.data});
+            
             //$scope.chartOptions.series = [{ name: 'Account 2', data: [300,200,250]}];
             console.log('chartOptions='+JSON.stringify($scope.chartOptions));
         };
