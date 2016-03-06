@@ -15,9 +15,14 @@ router.use(function timeLog(req, res, next) {
 });
 router.put('/saveaccount', function(req,res) {
     console.log('  req.body='+ JSON.stringify(req.body));
-    accountdao.saveAccount(req.body);
+    accountdao.saveAccount(req.body)
+        .then(function(doc) {
+            res.send(doc);
+        })
+        .fail(function(err) {
+            res.status(500).send('error:'+err);
+        });
 
-    res.send('save account');
 });
 router.put('/updateaccount', function(req,res) {
     console.log('  req.body='+ JSON.stringify(req.body));

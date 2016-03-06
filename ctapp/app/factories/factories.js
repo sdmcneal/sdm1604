@@ -24,7 +24,7 @@ angular.module('fsApp.common.models', [
         };
     })
     .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine,LedgerFactory) {
-        var verbose = 1;
+        var verbose = 3;
         var schedule_entries = [];
         var service = {};
         var next_schedule_entry_id;
@@ -55,23 +55,23 @@ angular.module('fsApp.common.models', [
             if (verbose>=2) console.log('ScheduleFactory.generateJournalEntriesForLoanPayment()');
 
             // paired account is liability account
-            var last_liability_account_balance = LedgerFactory.getLastBalance(entry.paired_account_id);
+            var last_liability_account_balance = LedgerFactory.getLastBalance(entry.paired_account_object_id);
             var interest_amount = last_liability_account_balance * entry.amount_calc;
             var principle_adjustment = interest_amount - entry.amount;
             
             // deduction journal
-            LedgerFactory.addJournalEntry(entry.account_id,
+            LedgerFactory.addJournalEntry(entry.account_object_id,
                                 entry.schedule_date, entry.schedule_entry_id,
                                 entry.description,
                                 entry.amount);
                               
             // interest adjustment
-            LedgerFactory.addJournalEntry(entry.paired_account_id,
+            LedgerFactory.addJournalEntry(entry.paired_account_object_id,
             entry.schedule_date,entry.schedule_entry_id,entry.description + ' interest',
             interest_amount);
             
             // principle adjustment
-            LedgerFactory.addJournalEntry(entry.paired_account_id,
+            LedgerFactory.addJournalEntry(entry.paired_account_object_id,
             entry.schedule_date,entry.schedule_entry_id,entry.description,
             -entry.amount);
             
@@ -87,15 +87,15 @@ angular.module('fsApp.common.models', [
                     if (verbose>=3) console.log('ScheduleFactory.runSchedule() journal entry:'+ JSON.stringify(entry));
                     switch (entry.catalog_entry_type) {
                         case ConstantsFactory.FIXED:
-                            LedgerFactory.addJournalEntry(entry.account_id,
+                            LedgerFactory.addJournalEntry(entry.account_object_id,
                             entry.schedule_date, entry.schedule_entry_id,
                             entry.description,
                             entry.amount);
                             break;
                         case ConstantsFactory.TYPE_INTEREST_ON_BALANCE:
-                            var last_balance = LedgerFactory.getLastBalance(entry.account_id);
+                            var last_balance = LedgerFactory.getLastBalance(entry.account_object_id);
                             var calc_amount = last_balance * entry.amount_calc;
-                            LedgerFactory.addJournalEntry(entry.account_id,
+                            LedgerFactory.addJournalEntry(entry.account_object_id,
                                 entry.schedule_date, entry.schedule_entry_id,
                                 entry.description,
                                 calc_amount);
@@ -115,14 +115,10 @@ angular.module('fsApp.common.models', [
 
             var new_schedule_entry = {
                 schedule_entry_id: next_schedule_entry_id++,
-
-                catalog_entry_id: data.catalog_entry_id,
-                catalog_entry_object_id: data.catalog_entry_object_id,
+                _id: data._id,
                 catalog_entry_type: data.catalog_entry_type,
                 schedule_date: date,
-                account_id: data.account_id,
                 account_object_id: data.account_object_id,
-                paired_account_id: data.paired_account_id,
                 paired_account_object_id: data.paired_account_object_id,
                 amount: data.amount,
                 amount_calc: data.amount_calc,
@@ -130,7 +126,7 @@ angular.module('fsApp.common.models', [
             };
 
             schedule_entries.push(new_schedule_entry);
-            if (verbose>=3) console.log("saving schedule: "+JSON.stringify(new_schedule_entry));
+            if (verbose>=3) console.log("  saving schedule: "+JSON.stringify(new_schedule_entry));
 
             return new_schedule_entry.schedule_entry_id;
         };

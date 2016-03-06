@@ -2,7 +2,7 @@
 
 angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
 .factory('CatalogFactory', function (ScheduleFactory, ConstantsFactory, CalculationEngine) {
-        var verbose = 1;
+        var verbose = 3;
         var catalog_entries = [];
         var service = {};
         var next_catalog_entry_id;
@@ -22,8 +22,8 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
                 user_id: form.user_id,
                 _id: form._id,
                 parent_catalog_entry_id: form.parent_catalog_entry_id,
-                account_id: form.account_id,
-                paired_account_id: form.paired_account_id,
+                account_object_id: form.account_object_id,
+                paired_account_object_id: form.paired_account_object_id,
                 catalog_entry_type: form.catalog_entry_type,
                 description: form.description,
                 frequency: form.frequency,
@@ -116,7 +116,7 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
           var entry;
           
           for (i=0;i<catalog_entries.length;i++) {
-            if (catalog_entries[i].catalog_entry_object_id==catalog_entry_object_id) {
+            if (catalog_entries[i]._id==catalog_entry_object_id) {
               entry = catalog_entries[i];
               i=catalog_entries.length;
             }

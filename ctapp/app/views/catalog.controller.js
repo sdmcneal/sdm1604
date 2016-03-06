@@ -25,8 +25,8 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models','fsApp.common.facto
             description: '',
             parent_id: '',
             catalog_entry_type: ConstantsFactory.FIXED,
-            account_id: '',
-            paired_account_id: '',
+            account_object_id: '',
+            paired_account_object_id: '',
             start_date: new Date(2016, 0, 1),
             end_date: new Date(2016, 11, 31),
             amount: 0.0,
@@ -59,7 +59,7 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models','fsApp.common.facto
                     .success(function(data, status) {
                         if (verbose >= 3) console.log('saved catalog: ' + JSON.stringify(data));
 
-                        form.catalog_entry_object_id = data._id;
+                        form._id = data._id;
                         CatalogFactory.addCatalogEntry(form);
                     })
                     .error(function(data, status) {
@@ -113,10 +113,10 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models','fsApp.common.facto
             description: entry.description,
             parent_id: entry.parent_id,
             catalog_entry_type: entry.catalog_entry_type,
-            account_id: entry.account_id,
-            account_object_id: "placeholder",
-            paired_account_id: entry.paired_account_id,
-            paired_account_object_id: "placeholder",
+
+            account_object_id: entry.account_object_id,
+
+            paired_account_object_id: entry.paired_account_object_id,
             start_date: entry.start_date,
             end_date: entry.end_date,
             amount: entry.amount,

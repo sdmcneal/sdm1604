@@ -23,11 +23,26 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
             type: '',
             balance: 0.0,
             balance_date: new Date(),
-            edit_mode: false
+            edit_mode: false,
+            _id: ''
         }
         
     }
-    
+    $scope.dropAllAccounts = function() {
+        var defer = $q.defer();
+
+        $http.get('/api/dropallaccounts')
+            .success(function (data, status) {
+                if (verbose >= 3) console.log('account collections dropped');
+                defer.resolve(data);
+            })
+            .error(function (data, status) {
+                console.log('error dropping account');
+                defer.reject(data);
+            });
+
+        return defer.promise;
+    }
     $scope.createAccount = function() {
         if (verbose>=2) console.log('AccountCtrl.createAccount()');
         var defer = $q.defer();
@@ -38,10 +53,10 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
             var form = $scope.account_form;
 
             $http.put('/api/saveaccount', form)
-                .success(function (data, status) {
-                    form._id = data._id;
+                .success(function (doc, status) {
+                    form._id = doc._id;
                     LedgerFactory.addAccount(form);
-                    if (verbose >= 3) console.log('saved account: ' + JSON.stringify(data));
+                    if (verbose >= 3) console.log('saved account: ' + JSON.stringify(doc));
                     clearForm();
                     defer.resolve(form._id);
                 })
@@ -59,7 +74,7 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
         var form = $scope.account_form;
         if (verbose>=3) console.log('form='+JSON.stringify($scope.account_form));
 
-        form.account_id = LedgerFactory.updateAccount(form.account_id,form.name,form.type,form.balance,form.balance_date);
+        form.account_id = LedgerFactory.updateAccount(form._id,form.name,form.type,form.balance,form.balance_date);
 
         $http.put('/api/updateaccount',form)
             .success(function(data,status) {
@@ -82,9 +97,9 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
         var account = LedgerFactory.getAccountDetails(account_id);
         if (verbose>=3) console.log('  account: '+JSON.stringify(account));
 
-        if (account.account_id) {
+        if (account._id) {
             $scope.account_form = {
-                account_id: account_id,
+                _id: account_id,
                 name: account.name,
                 type: account.type,
                 balance: account.balance,
@@ -93,15 +108,7 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
             }
         }
     };
-    $scope.dropAllAccounts = function() {
-        $http.get('/api/dropallaccounts')
-            .success(function (data, status) {
-                if (verbose >= 3) console.log('account collections dropped');
-            })
-            .error(function (data, status) {
-                console.log('error dropping account');
-            });
-    };
+
 
 
 });

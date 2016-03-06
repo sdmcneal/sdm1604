@@ -4,11 +4,14 @@ describe('AccountCtrl', function() {
     var controller;
     var $scope = {};
     
-    beforeEach(inject(function(_$controller_) {
-        var $controller = _$controller_;
-        controller = $controller('AccountCtrl', {$scope: $scope});
-    }));
-    
+    beforeEach(function(done) {
+        inject(function(_$controller_) {
+            var $controller = _$controller_;
+            controller = $controller('AccountCtrl', {$scope: $scope});
+        });
+    //   $scope.dropAllAccounts()
+    //       .then(done);
+    });
     describe('createAccount()', function() {
         it('initalizes', function() {
 

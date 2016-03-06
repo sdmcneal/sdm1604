@@ -13,12 +13,12 @@
             </select>
             Frequency Parameter: <input type="number" class="form-control" ng-model="catalog_form.frequency_param" required>
             Account:
-            <select class="form-control" ng-model="catalog_form.account_id">
-                <option ng-repeat="option in account_options" value="{{option.account_id}}">{{option.name}}</option>
+            <select class="form-control" ng-model="catalog_form.account_object_id">
+                <option ng-repeat="option in account_options" value="{{option._id}}">{{option.name}}</option>
             </select>
             Paired Account (only with certain types):
-            <select class="form-control" ng-model="catalog_form.paired_account_id">
-                <option ng-repeat="option in account_options" value="{{option.account_id}}">{{option.name}}</option>
+            <select class="form-control" ng-model="catalog_form.paired_account_object_id">
+                <option ng-repeat="option in account_options" value="{{option._id}}">{{option.name}}</option>
             </select>
             Start Date: <input type="date" class="form-control" ng-model="catalog_form.start_date" required>
             End Date: <input type="date" class="form-control" ng-model="catalog_form.end_date" required>
