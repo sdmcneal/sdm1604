@@ -35,7 +35,8 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Account ID</th>
+                <th>Catalog ID</th>
+            
                 <th>Name</th>
                 <th>Type</th>
                 <th>Amount</th>
@@ -47,6 +48,7 @@
             <tbody>
             <tr ng-repeat="u in catalogEntries">
                 <td>{{u.catalog_entry_id}}</td>
+                
                 <td>{{u.description}}</td>
                 <td>{{u.catalog_entry_type}}</td>
                 <td>{{u.amount | currency }}</td>

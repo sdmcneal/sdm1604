@@ -54,12 +54,16 @@ module.exports.dropAllCatalogs = function() {
     });
     return deferred.promise;
 };
-module.exports.dropCatalog = function(id) {
+module.exports.dropCatalog = function(user_id, id) {
     if (verbose>=2) console.log('CatalogDAO.dropCatalog()');
+    if (verbose>=3) console.log('  user_id='+user_id+' id='+id);
+    
     var deferred = q.defer();
 
-    Catalog.remove({catalog_entry_id: id}, function(err,result) {
+    Catalog.findOneAndRemove({user_id: user_id, catalog_entry_id: id}, 
+    function(err,result) {
         if (err) {
+            if (verbose>=1) console.log('  drop error'+err);
             deferred.reject(err);
         } else {
             if (verbose>=3) console.log('  drop result:'+JSON.stringify(result));
@@ -116,3 +120,21 @@ module.exports.getAllCatalogEntries = function(user_id) {
     return defer.promise;
 
 };
+module.exports.getNextId = function(user_id) {
+    if (verbose>=2) console.log('CatalogDAO.getNextId()');
+    
+    var defer = q.defer();
+    
+    Catalog.findOne({user_id: user_id}).sort({catalog_entry_id: -1})
+    .exec(function (err,doc) {
+        if (err) {
+            defer.reject(err);
+        } else {
+            if (verbose>=3) console.log('  result: '+JSON.stringify(doc));
+            defer.resolve(doc.catalog_entry_id+1);
+        }
+    });
+    
+    return defer.promise;
+    
+}

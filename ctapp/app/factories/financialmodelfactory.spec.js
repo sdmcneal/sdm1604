@@ -1,4 +1,4 @@
-describe('fsApp.common.models.FinancialModelFactory', function() {
+xdescribe('fsApp.common.models.FinancialModelFactory', function() {
     beforeEach(module('fsApp.common.models'));
 
     var constants_factory;

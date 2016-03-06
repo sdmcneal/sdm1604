@@ -54,10 +54,23 @@ router.put('/updatecatalogentry', function(req,res) {
 
     
 });
-router.get('/dropcatalog/:id',function(req,res) {
-    if (verbose>=3) console.log('  req.body='+ JSON.stringify(req.body));
-    catalogdao.dropCatalog(req.params.id)
+router.get('/getnextcatalogid/:user_id', function(req,res) {
+    catalogdao.getNextId(req.params.user_id)
+    .then(function (doc) {
+        console.log('  next catalog id:'+JSON.stringify(doc));
+        res.send(doc);
+    })
+    .fail(function(err) {
+        console.log('  error getting next id: '+err);
+        res.status(500).send('error '+err);
+    })
+})
+router.get('/dropcatalog/:user_id/:id',function(req,res) {
+    if (verbose>=3) console.log('  user id='+req.params.user_id+' id='+
+    req.params.id);
+    catalogdao.dropCatalog(req.params.user_id,req.params.id)
     .then(function(result) {
+        if (verbose>=3) console.log('  result: ' +result);
         res.send('ok');
     })
     .fail(function(err) {
