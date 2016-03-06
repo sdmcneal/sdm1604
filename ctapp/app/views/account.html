@@ -5,7 +5,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Account ID</th>
+                <th>Account Object ID</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>Balance</th>
@@ -15,12 +15,12 @@
             </thead>
             <tbody>
             <tr ng-repeat="u in accounts">
-                <td>{{u.account_id}}</td>
+                <td>{{u._id}}</td>
                 <td>{{u.name}}</td>
                 <td>{{u.type}}</td>
                 <td>{{u.balance | currency }}</td>
                 <td>{{u.balance_date | date}}</td>
-                <td><button class="btn btn-info" ng-click="editAccount(u.account_id)">Edit</button></td>
+                <td><button class="btn btn-info" ng-click="editAccount(u._id)">Edit</button></td>
             </tr>
             </tbody>
         </table>

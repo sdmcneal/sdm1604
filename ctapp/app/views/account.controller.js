@@ -2,7 +2,7 @@
 
 angular.module('fsApp.views.ledger',['fsApp.common.models'])
 
-.controller('AccountCtrl', function($scope,$http,LedgerFactory,UserFactory) {
+.controller('AccountCtrl', function($scope,$http,$q,LedgerFactory,UserFactory) {
    var verbose = 3;
    
 
@@ -30,23 +30,28 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
     
     $scope.createAccount = function() {
         if (verbose>=2) console.log('AccountCtrl.createAccount()');
+        var defer = $q.defer();
 
-        if($scope.account_form.account_id) {
+        if($scope.account_form._id) {
             $scope.updateAccount();
         } else {
             var form = $scope.account_form;
 
-            form.account_id = LedgerFactory.addAccount(form);
-
             $http.put('/api/saveaccount', form)
                 .success(function (data, status) {
+                    form._id = data._id;
+                    LedgerFactory.addAccount(form);
                     if (verbose >= 3) console.log('saved account: ' + JSON.stringify(data));
+                    clearForm();
+                    defer.resolve(form._id);
                 })
                 .error(function (data, status) {
                     console.log('error saving account');
+                    defer.reject(data);
                 });
         }
-        clearForm();
+
+        return defer.promise;
     };
     $scope.updateAccount = function() {
         if (verbose>=2) console.log('AccountCtrl.updateAccount()');
