@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('fsApp.common.models')
+angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
 .factory('CatalogFactory', function (ScheduleFactory, ConstantsFactory, CalculationEngine) {
         var verbose = 1;
         var catalog_entries = [];
@@ -20,7 +20,7 @@ angular.module('fsApp.common.models')
 
             var new_catalog_entry = {
                 user_id: form.user_id,
-
+                _id: form._id,
                 parent_catalog_entry_id: form.parent_catalog_entry_id,
                 account_id: form.account_id,
                 paired_account_id: form.paired_account_id,
@@ -85,7 +85,7 @@ angular.module('fsApp.common.models')
         };
         service.updateCatalogEntry = function (form) {
           if (verbose>=2) console.log('CatalogFactory.updateCatalogEntry()');
-          service.removeCatalogEntry(form.catalog_entry_id);
+          service.removeCatalogEntry(form._id);
           service.addCatalogEntry(form);
         }
         service.removeCatalogEntry=function(id) {
@@ -96,7 +96,7 @@ angular.module('fsApp.common.models')
           var i;
           
           for (i=0;i<catalog_entries.length;i++) {
-            if (id==catalog_entries[i].catalog_entry_id) {
+            if (id==catalog_entries[i]._id) {
               catalog_entries.splice(i,1);
             }
           }
@@ -111,19 +111,19 @@ angular.module('fsApp.common.models')
         service.setCatalogEntries = function (list) {
           catalog_entries = list;
         };
-        service.getCatalogEntry = function (catalog_entry_id) {
+        service.getCatalogEntry = function (catalog_entry_object_id) {
           var i;
           var entry;
           
           for (i=0;i<catalog_entries.length;i++) {
-            if (catalog_entries[i].catalog_entry_id==catalog_entry_id) {
+            if (catalog_entries[i].catalog_entry_object_id==catalog_entry_object_id) {
               entry = catalog_entries[i];
               i=catalog_entries.length;
             }
           }
           if (undefined===entry) {
             if (verbose>=1) console.log('  no catalog found with id: '+
-            catalog_entry_id);
+            catalog_entry_object_id);
           }
           return entry;
         }

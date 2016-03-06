@@ -40,7 +40,7 @@ router.put('/savecatalog', function(req,res) {
     //console.log('  req.body='+ JSON.stringify(req.body));
     catalogdao.saveCatalog(req.body).then( function(a) {
         console.log('  api saved catalog:'+JSON.stringify(a));
-        res.send('save catalog');
+        res.send(a._id);
     });
 
     

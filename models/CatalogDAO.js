@@ -60,7 +60,7 @@ module.exports.dropCatalog = function(user_id, id) {
     
     var deferred = q.defer();
 
-    Catalog.findOneAndRemove({user_id: user_id, catalog_entry_id: id}, 
+    Catalog.findOneAndRemove({user_id: user_id, _id: id},
     function(err,result) {
         if (err) {
             if (verbose>=1) console.log('  drop error'+err);

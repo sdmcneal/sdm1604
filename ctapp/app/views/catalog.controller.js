@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('fsApp.views.catalog', ['fsApp.common.models'])
+angular.module('fsApp.views.catalog', ['fsApp.common.models','fsApp.common.factories.Catalog'])
 
 .controller('CatalogController', function($scope, $http, CatalogFactory, ScheduleFactory, ConstantsFactory,
     LedgerFactory, UserFactory) {
@@ -50,15 +50,16 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models'])
         var form = $scope.catalog_form;
 
         form.user_id = UserFactory.getCurrentUser();
-        $http.get('/api/getnextcatalogid/' + user_id)
-            .success(function(id) {
-                if (verbose>=3) console.log('  id: '+id);
-                form.catalog_entry_id = id;
+        //$http.get('/api/getnextcatalogid/' + user_id)
+        //    .success(function(id) {
+        //        if (verbose>=3) console.log('  id: '+id);
+        //        form.catalog_entry_id = id;
 
                 $http.put('/api/savecatalog', form)
                     .success(function(data, status) {
                         if (verbose >= 3) console.log('saved catalog: ' + JSON.stringify(data));
-                    
+
+                        form.catalog_entry_object_id = data._id;
                         CatalogFactory.addCatalogEntry(form);
                     })
                     .error(function(data, status) {
@@ -66,10 +67,10 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models'])
                     });
 
                 clearForm();
-            })
-            .error(function(err) {
-                if (verbose>=1) console.log('  error getting next id: '+err);
-            });
+            //})
+            //.error(function(err) {
+            //    if (verbose>=1) console.log('  error getting next id: '+err);
+            //});
     };
     $scope.updateCatalogEntry = function() {
         if (verbose >= 2) console.log('CatalogController.updateCatalogEntry()');
@@ -107,13 +108,15 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models'])
         var entry = CatalogFactory.getCatalogEntry(id);
 
         $scope.catalog_form = {
-            catalog_entry_id: entry.catalog_entry_id,
+            _id: entry._id,
             user_id: entry.user_id,
             description: entry.description,
             parent_id: entry.parent_id,
             catalog_entry_type: entry.catalog_entry_type,
             account_id: entry.account_id,
+            account_object_id: "placeholder",
             paired_account_id: entry.paired_account_id,
+            paired_account_object_id: "placeholder",
             start_date: entry.start_date,
             end_date: entry.end_date,
             amount: entry.amount,

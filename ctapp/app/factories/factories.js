@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('fsApp.common.models', [])
+angular.module('fsApp.common.models', ['fsApp.common.factories.Catalog'])
 
     .factory('CrumbFactory', function () {
         return {
@@ -333,21 +333,26 @@ angular.module('fsApp.common.models', [])
                 });
             }
         };
-        service.addScheduleEntry = function (catalog_entry_type,catalog_entry_id, schedule_date,
-                                             account_id,paired_account_id,amount, amount_calc,description) {
+        service.addScheduleEntry = function (date,data) {
+            //catalog_entry_type,catalog_entry_id, schedule_date,
+            //                                 account_id,paired_account_id,amount, amount_calc,description) {
 
             if (verbose>=2) console.log('ScheduleFactory.addScheduleEntry()');
 
             var new_schedule_entry = {
                 schedule_entry_id: next_schedule_entry_id++,
-                catalog_entry_id: catalog_entry_id,
-                catalog_entry_type: catalog_entry_type,
-                schedule_date: schedule_date,
-                account_id: account_id,
-                paired_account_id: paired_account_id,
-                amount: amount,
-                amount_calc: amount_calc,
-                description: description
+
+                catalog_entry_id: data.catalog_entry_id,
+                catalog_entry_object_id: data.catalog_entry_object_id,
+                catalog_entry_type: data.catalog_entry_type,
+                schedule_date: date,
+                account_id: data.account_id,
+                account_object_id: data.account_object_id,
+                paired_account_id: data.paired_account_id,
+                paired_account_object_id: data.paired_account_object_id,
+                amount: data.amount,
+                amount_calc: data.amount_calc,
+                description: data.description
             };
 
             schedule_entries.push(new_schedule_entry);
@@ -369,9 +374,12 @@ angular.module('fsApp.common.models', [])
         };
         service.saveFixedSchedule = function(schedule,catalog_entry) {
             schedule.forEach(function (entry) {
-                service.addScheduleEntry(catalog_entry.catalog_entry_type,catalog_entry.catalog_entry_id,
-                entry,catalog_entry.account_id,catalog_entry.paired_account_id,
-                catalog_entry.amount,catalog_entry.amount_calc,catalog_entry.description);
+
+
+                service.addScheduleEntry(entry,catalog_entry);
+                //    catalog_entry.catalog_entry_type,catalog_entry.catalog_entry_id,
+                //entry,catalog_entry.account_id,catalog_entry.paired_account_id,
+                //catalog_entry.amount,catalog_entry.amount_calc,catalog_entry.description);
             });
 
         };

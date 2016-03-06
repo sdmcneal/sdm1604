@@ -35,7 +35,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Catalog ID</th>
+                <th>_id</th>
             
                 <th>Name</th>
                 <th>Type</th>
@@ -47,7 +47,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="u in catalogEntries">
-                <td>{{u.catalog_entry_id}}</td>
+                <td>{{u._id}}</td>
                 
                 <td>{{u.description}}</td>
                 <td>{{u.catalog_entry_type}}</td>
@@ -56,10 +56,10 @@
                 <td>{{u.start_date | date}}</td>
                 <td>
                     <button class="btn btn-info" 
-                    ng-click="editCatalog(u.catalog_entry_id)">Edit</button>
+                    ng-click="editCatalog(u.catalog_entry_object_id)">Edit</button>
                 
                     <button class="btn btn-info"
-                    ng-click="deleteCatalogEntry(u.catalog_entry_id)">Delete
+                    ng-click="deleteCatalogEntry(u.catalog_entry_object_id)">Delete
                     </button>
                 </td>
             </tbody>
