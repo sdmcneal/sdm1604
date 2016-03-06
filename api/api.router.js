@@ -7,6 +7,8 @@ var accountdao = require('../models/AccountDAO');
 var catalogdao = require('../models/CatalogDAO');
 var modeldao = require('../models/FinancialModelDAO');
 
+var verbose = 3;
+
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
     next();
@@ -35,7 +37,7 @@ router.get('/dropallaccounts', function(req,res) {
     res.send('drop accounts');
 });
 router.put('/savecatalog', function(req,res) {
-    console.log('  req.body='+ JSON.stringify(req.body));
+    //console.log('  req.body='+ JSON.stringify(req.body));
     catalogdao.saveCatalog(req.body).then( function(a) {
         console.log('  api saved catalog:'+JSON.stringify(a));
         res.send('save catalog');
@@ -43,6 +45,26 @@ router.put('/savecatalog', function(req,res) {
 
     
 });
+router.put('/updatecatalogentry', function(req,res) {
+    if (verbose>=3) console.log('  req.body='+ JSON.stringify(req.body));
+    catalogdao.updateCatalog(req.body).then( function(a) {
+        console.log('  api updated catalog:'+JSON.stringify(a));
+        res.send('save catalog');
+    });
+
+    
+});
+router.get('/dropcatalog/:id',function(req,res) {
+    if (verbose>=3) console.log('  req.body='+ JSON.stringify(req.body));
+    catalogdao.dropCatalog(req.params.id)
+    .then(function(result) {
+        res.send('ok');
+    })
+    .fail(function(err) {
+        if (verbose>=1) console.log(' error dropping catalog: '+err);
+        res.status(500).send('error: '+err);
+    });
+})
 router.get('/getallcatalogentries/:user_id', function(req,res) {
     catalogdao.getAllCatalogEntries(req.params.user_id).then( function(list) {
         res.send(list);

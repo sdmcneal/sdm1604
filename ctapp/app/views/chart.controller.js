@@ -3,6 +3,7 @@
 angular.module('fsApp.views.chart', ['fsApp.common.models'])
 .factory('chartService', function($rootScope) {
     var service = {};
+   
     
     service.chart = '';
     
@@ -47,6 +48,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
         $scope.thelabels = ['Jan','Feb','Mar'];
         $scope.thedata= [100,200,150];
         $scope.time_scales = [];
+         var verbose = 1;
         
         
         init();
@@ -86,7 +88,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
            // $scope.setTheTimeScale(2);
         }
         $scope.drawLedger = function() {
-            console.log('drawLedger()');
+            if (verbose>=2) console.log('drawLedger()');
             var accounts = LedgerFactory.getAccountList();
             
             accounts.forEach(function (a) {
@@ -96,21 +98,18 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
                 chartService.addSeries(result.labels,{ name: a.name, data: result.data});
             });
             //$scope.chartOptions.series = [{ name: 'Account 2', data: [300,200,250]}];
-            console.log('chartOptions='+JSON.stringify($scope.chartOptions));
+            if (verbose>=3) console.log('chartOptions='+JSON.stringify($scope.chartOptions));
         };
         // Sample options for first chart
         $scope.chartOptions = {
             title: {
-                text: 'Temperature data'
+                text: 'Forecast Summary'
             },
             xAxis: {
                 categories: $scope.thelabels
             },
 
-            series: [{
-                name: 'Account 1',
-                data: $scope.thedata
-            }]
+            series: []
         };
 
         

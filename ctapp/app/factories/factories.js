@@ -53,21 +53,28 @@ angular.module('fsApp.common.models', [])
             var current_je_date;
             var current_month_end;
 
-            for (i=0;i<month_end_dates.length;i++) {
-                current_je_date = ledger[j].balance_date;
-                current_month_end = month_end_dates[i];
-
-                while (current_month_end<current_je_date) {
-                    previous_je_balance = ledger[j].balance;
-                    previous_je_date = ledger[j].balance_date;
-                    if (j<(ledger.length-1)) j++;
-                    current_je_date = ledger[j].balance_date;
-                }
-
-                result.labels.push(CalculationEngine.getYearMonthText(current_month_end));
-                result.data.push(ledger[j].balance);
-                if (j<(ledger.length-1)) j++;
-
+            if (ledger.length<2) {
+              for (i=0;i<month_end_dates.length;i++) {
+                result.labels.push(CalculationEngine.getYearMonthText(month_end_dates[i]));
+                result.data.push(previous_je_balance);
+              }
+            } else {
+              for (i=0;i<month_end_dates.length;i++) {
+                  current_je_date = ledger[j].balance_date;
+                  current_month_end = month_end_dates[i];
+  
+                  while (current_month_end<current_je_date) {
+                      previous_je_balance = ledger[j].balance;
+                      previous_je_date = ledger[j].balance_date;
+                      if (j<(ledger.length-1)) j++;
+                      current_je_date = ledger[j].balance_date;
+                  }
+  
+                  result.labels.push(CalculationEngine.getYearMonthText(current_month_end));
+                  result.data.push(ledger[j].balance);
+                  if (j<(ledger.length-1)) j++;
+  
+              }
             }
             if (verbose>=3) console.log('  result: '+JSON.stringify(result));
             return result;
@@ -257,7 +264,19 @@ angular.module('fsApp.common.models', [])
             range_start_date = ConstantsFactory.DEFAULT_RANGE_START;
             range_end_date = ConstantsFactory.DEFAULT_RANGE_END;
         }
-
+        service.removeScheduleFromCatalog = function(catalog_entry_id) {
+          var i;
+          var o=0;
+          
+          // TODO: this could become expensive transaction over time
+          for (i=0;i<schedule_entries.length;i++) {
+            if (schedule_entries[i].catalog_entry_id==catalog_entry_id) {
+              schedule_entries.splice(i,1);
+              o++;
+            }
+          }
+          if (verbose>=3) console.log('  removed instances: '+o);
+        }
         service.generateJournalEntriesForLoanPayment = function(entry) {
             if (verbose>=2) console.log('ScheduleFactory.generateJournalEntriesForLoanPayment()');
 
@@ -697,7 +716,24 @@ angular.module('fsApp.common.models', [])
 
             return new_catalog_entry.catalog_entry_id;
         };
-
+        service.updateCatalogEntry = function (form) {
+          if (verbose>=2) console.log('CatalogFactory.updateCatalogEntry()');
+          service.removeCatalogEntry(form.catalog_entry_id);
+          service.addCatalogEntry(form);
+        }
+        service.removeCatalogEntry=function(id) {
+          // remove all the scheduled items first
+          ScheduleFactory.removeScheduleFromCatalog(id);
+          
+          // remove from array
+          var i;
+          
+          for (i=0;i<catalog_entries.length;i++) {
+            if (id==catalog_entries[i].catalog_entry_id) {
+              catalog_entries.splice(i,1);
+            }
+          }
+        }
         service.getCatalogEntryCount = function () {
             return catalog_entries.length;
         };
@@ -708,6 +744,22 @@ angular.module('fsApp.common.models', [])
         service.setCatalogEntries = function (list) {
           catalog_entries = list;
         };
+        service.getCatalogEntry = function (catalog_entry_id) {
+          var i;
+          var entry;
+          
+          for (i=0;i<catalog_entries.length;i++) {
+            if (catalog_entries[i].catalog_entry_id==catalog_entry_id) {
+              entry = catalog_entries[i];
+              i=catalog_entries.length;
+            }
+          }
+          if (undefined===entry) {
+            if (verbose>=1) console.log('  no catalog found with id: '+
+            catalog_entry_id);
+          }
+          return entry;
+        }
 
         return service;
     })

@@ -24,7 +24,9 @@
             End Date: <input type="date" class="form-control" ng-model="catalog_form.end_date" required>
             Amount: <input type="number" class="form-control" ng-model="catalog_form.amount" required>
             Amount Calc: <input type="number" class="form-control" ng-model="catalog_form.amount_calc" step="0.001">
-            <button class="btn btn-primary" type="submit" ng-click="createCatalogEntry()">Create Catalog Entry<br />
+            
+            <button ng-if="catalog_form.edit_mode==false" class="btn btn-primary" type="submit" ng-click="createCatalogEntry()">Create Catalog Entry<br />
+            <button ng-if="catalog_form.edit_mode==true" class="btn btn-primary" type="submit" ng-click="updateCatalogEntry()">Update Catalog Entry<br />
         </form>
     </div>
     <h2>Catalog Entries:</h2>
@@ -39,6 +41,7 @@
                 <th>Amount</th>
                 <th>Amount Calc</th>
                 <th>Date</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
@@ -49,6 +52,14 @@
                 <td>{{u.amount | currency }}</td>
                 <td>{{u.amount_calc | number:3 }}</td>
                 <td>{{u.start_date | date}}</td>
+                <td>
+                    <button class="btn btn-info" 
+                    ng-click="editCatalog(u.catalog_entry_id)">Edit</button>
+                
+                    <button class="btn btn-info"
+                    ng-click="deleteCatalogEntry(u.catalog_entry_id)">Delete
+                    </button>
+                </td>
             </tbody>
         </table>
     </div>

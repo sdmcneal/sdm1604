@@ -42,13 +42,27 @@ module.exports.updateCatalog = function(data) {
     return deferred.promise;
 };
 module.exports.dropAllCatalogs = function() {
-    if (verbose>=2) console.log('fsDAO.dropAllCatalogs()');
+    if (verbose>=2) console.log('CatalogDAO.dropAllCatalogs()');
     var deferred = q.defer();
 
     db.dropCollection('catalogs', function(err,result) {
         if (err) {
             deferred.reject(err);
         } else {
+            deferred.resolve(result);
+        }
+    });
+    return deferred.promise;
+};
+module.exports.dropCatalog = function(id) {
+    if (verbose>=2) console.log('CatalogDAO.dropCatalog()');
+    var deferred = q.defer();
+
+    Catalog.remove({catalog_entry_id: id}, function(err,result) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            if (verbose>=3) console.log('  drop result:'+JSON.stringify(result));
             deferred.resolve(result);
         }
     });

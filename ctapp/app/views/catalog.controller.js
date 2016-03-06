@@ -35,7 +35,8 @@ LedgerFactory,UserFactory) {
             frequency_param: 0,
             param1: '',
             param2: '',
-            tax_year_maximum: ''
+            tax_year_maximum: '',
+            edit_mode: false
         }
     }
 
@@ -61,6 +62,22 @@ LedgerFactory,UserFactory) {
 
         clearForm();
     };
+    $scope.updateCatalogEntry = function() {
+        if (verbose>=2) console.log('CatalogController.updateCatalogEntry()');
+        
+        var form = $scope.catalog_form;
+        
+        $http.put('/api/updatecatalogentry',form)
+        .success(function(data,status) {
+            if (verbose>=3) console.log('  updated catalog: '+
+            JSON.stringify(data));
+            CatalogFactory.updateCatalogEntry(form);
+        })
+        .error(function(data,status) {
+            if (verbose>=1) console.log('  error updating catalog: '+
+            data);
+        });
+    }
     $scope.getAllCatalogEntries = function() {
         if (verbose>=2) console.log('CatalogController.getAllCatalogEntries()');
         
@@ -74,6 +91,40 @@ LedgerFactory,UserFactory) {
             console.log('  error getting catalog: '+ err);
         });
     };
-   
-   
+   $scope.editCatalog = function(id) {
+       if (verbose>=2) console.log("CatalogController.editCatalog()");
+       
+       var entry = CatalogFactory.getCatalogEntry(id);
+       
+       $scope.catalog_form = {
+           catalog_entry_id: entry.catalog_entry_id,
+           user_id: entry.user_id,
+           description: entry.description,
+           parent_id: entry.parent_id,
+           catalog_entry_type: entry.catalog_entry_type,
+           account_id: entry.account_id,
+           paired_account_id: entry.paired_account_id,
+           start_date: entry.start_date,
+           end_date: entry.end_date,
+           amount: entry.amount,
+           amount_calc: entry.amount_calc,
+           frequency: entry.frequency,
+           frequency_param: entry.frequency_param,
+           param1: entry.param1,
+           param2: entry.param2,
+           tax_year_maximum: entry.tax_year_maximum,
+           edit_mode: true
+       }
+   };
+   $scope.deleteCatalogEntry=function(id) {
+       if (verbose>=2) console.log("CatalogController.deleteCatalogEntry()");
+       
+       $http.get('/api/dropcatalog/'+id)
+       .success(function(data) {
+           CatalogFactory.removeCatalogEntry(id);
+       })
+       .error(function(err) {
+           if (verbose>=1) console.log(' error deleting: '+err);
+       });
+   }
 });
