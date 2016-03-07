@@ -2,7 +2,7 @@
 
 angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
 .factory('CatalogFactory', function (ScheduleFactory, ConstantsFactory, CalculationEngine) {
-        var verbose = 3;
+        var verbose = 1;
         var catalog_entries = [];
         var service = {};
         var next_catalog_entry_id;
@@ -35,14 +35,6 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
                 tax_year_maximum: form.tax_year_maximum
             };
 
-            if (form.catalog_entry_id === undefined) {
-                new_catalog_entry.catalog_entry_id = next_catalog_entry_id++;
-            } else {
-                new_catalog_entry.catalog_entry_id = form.catalog_entry_id;
-                if (form.catalog_entry_id>=next_catalog_entry_id) {
-                  next_catalog_entry_id - form.catalog_entry_id+1;
-                }
-            }
 
             if (form.start_date)
                 new_catalog_entry.start_date = new Date(form.start_date);
@@ -57,6 +49,7 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
             }
 
             catalog_entries.push(new_catalog_entry);
+            console.log(' catalog_entries: '+JSON.stringify(catalog_entries));
             ScheduleFactory.generateScheduleFromCatalog(new_catalog_entry);
 
             //

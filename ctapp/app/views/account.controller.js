@@ -70,21 +70,29 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
     };
     $scope.updateAccount = function() {
         if (verbose>=2) console.log('AccountCtrl.updateAccount()');
+        var defer = $q.defer();
 
         var form = $scope.account_form;
         if (verbose>=3) console.log('form='+JSON.stringify($scope.account_form));
 
-        form.account_id = LedgerFactory.updateAccount(form._id,form.name,form.type,form.balance,form.balance_date);
-
         $http.put('/api/updateaccount',form)
             .success(function(data,status) {
                 if (verbose>=3) console.log('saved account: '+JSON.stringify(data));
+                defer.resolve(form._id);
+
+                LedgerFactory.updateAccount(form._id,form.name,
+                    form.type,form.balance,form.balance_date);
+
+                clearForm();
             })
             .error(function(data,status) {
                 console.log('error saving account');
+                defer.reject(data);
             });
 
-        clearForm();
+
+
+        return defer.promise;
     };
 
     $scope.getAccountCount = function() {

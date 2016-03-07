@@ -4,7 +4,7 @@ angular.module('fsApp.common.factories.Ledger',[
     'fsApp.common.models'
 ])
     .factory('LedgerFactory', function (ConstantsFactory,CalculationEngine) {
-        var verbose = 3; // 1=error only, 2=init/tracer, 3=debug
+        var verbose = 1; // 1=error only, 2=init/tracer, 3=debug
         var ledgers = [];
         var accounts = [];
         var account_ids = [];

@@ -8,8 +8,8 @@
           <th>Schedule ID</th>
           <th>Date</th>
           <th>Description</th>
-          <th>Account ID</th>
-          <th>Paired Account ID</th>
+          <th>Account ID
+           / Paired Account ID</th>
           <th>Amount</th>
           <th>Amount Calc</th>
         </tr>
@@ -19,8 +19,8 @@
           <td>{{u.schedule_entry_id}}</td>
           <td>{{u.schedule_date | date}}</td>
           <td>{{u.description}}</td>
-          <td>{{u.account_id}}</td>
-          <td>{{u.paired_account_id }}</td>
+          <td>{{u.account_object_id}} /
+          {{u.paired_account_object_id }}</td>
           <td>{{u.amount | currency }}</td>
           <td>{{u.amount_calc | number:3 }}</td>
       </tbody>

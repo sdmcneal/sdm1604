@@ -24,7 +24,7 @@ angular.module('fsApp.common.models', [
         };
     })
     .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine,LedgerFactory) {
-        var verbose = 3;
+        var verbose = 1;
         var schedule_entries = [];
         var service = {};
         var next_schedule_entry_id;
@@ -38,15 +38,18 @@ angular.module('fsApp.common.models', [
             range_start_date = ConstantsFactory.DEFAULT_RANGE_START;
             range_end_date = ConstantsFactory.DEFAULT_RANGE_END;
         }
-        service.removeScheduleFromCatalog = function(catalog_entry_id) {
+        service.removeScheduleFromCatalog = function(catalog_entry_object_id) {
+            if (verbose>=3) console.log('ScheduleFactory.removeScheduleFromCatalog('+
+            catalog_entry_object_id+')');
           var i;
           var o=0;
           
           // TODO: this could become expensive transaction over time
           for (i=0;i<schedule_entries.length;i++) {
-            if (schedule_entries[i].catalog_entry_id==catalog_entry_id) {
+            if (schedule_entries[i].catalog_entry_object_id==catalog_entry_object_id) {
               schedule_entries.splice(i,1);
               o++;
+                i--;
             }
           }
           if (verbose>=3) console.log('  removed instances: '+o);
@@ -115,7 +118,7 @@ angular.module('fsApp.common.models', [
 
             var new_schedule_entry = {
                 schedule_entry_id: next_schedule_entry_id++,
-                _id: data._id,
+                catalog_entry_object_id: data._id,
                 catalog_entry_type: data.catalog_entry_type,
                 schedule_date: date,
                 account_object_id: data.account_object_id,

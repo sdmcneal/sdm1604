@@ -59,7 +59,7 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models','fsApp.common.facto
                     .success(function(data, status) {
                         if (verbose >= 3) console.log('saved catalog: ' + JSON.stringify(data));
 
-                        form._id = data._id;
+                        form._id = data;
                         CatalogFactory.addCatalogEntry(form);
                     })
                     .error(function(data, status) {
@@ -82,6 +82,7 @@ angular.module('fsApp.views.catalog', ['fsApp.common.models','fsApp.common.facto
                 if (verbose >= 3) console.log('  updated catalog: ' +
                     JSON.stringify(data));
                 CatalogFactory.updateCatalogEntry(form);
+                clearForm();
             })
             .error(function(data, status) {
                 if (verbose >= 1) console.log('  error updating catalog: ' +

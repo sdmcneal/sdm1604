@@ -35,7 +35,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
                 }
                 
                 scope.$watch("config.series", function(loading) {
-                    console.log('watch()'+JSON.stringify(scope.options));
+                    //console.log('watch()'+JSON.stringify(scope.options));
                     //chart.addSeries({ name: 'Account 2', data: [300,200,250]});
                 });
                 
@@ -92,7 +92,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
             var accounts = LedgerFactory.getAccountList();
             
             accounts.forEach(function (a) {
-                var result = LedgerFactory.getMonthEndBalances(a.account_id,
+                var result = LedgerFactory.getMonthEndBalances(a._id,
                 $scope.start_date,$scope.end_date);
                 
                 chartService.addSeries(result.labels,{ name: a.name, data: result.data});

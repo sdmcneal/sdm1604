@@ -1,7 +1,7 @@
 app.controller('FSMainController', function($scope, $http, $q, UserFactory,
   LedgerFactory, CatalogFactory, ScheduleFactory, ConstantsFactory) {
   var fsuser;
-  var verbose = 1;
+  var verbose = 3;
 
   init();
 

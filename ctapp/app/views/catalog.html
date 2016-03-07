@@ -11,20 +11,37 @@
             <select class="form-control" ng-model="catalog_form.frequency">
                 <option ng-repeat="option in frequency_options" value="{{option}}">{{option}}</option>
             </select>
-            Frequency Parameter: <input type="number" class="form-control" ng-model="catalog_form.frequency_param" required>
+
+            <div ng-if="catalog_form.frequency=='monthly'">
+                Day of Month:
+
+                <input type="number" class="form-control"
+                       ng-model="catalog_form.frequency_param" required>
+            </div>
             Account:
             <select class="form-control" ng-model="catalog_form.account_object_id">
                 <option ng-repeat="option in account_options" value="{{option._id}}">{{option.name}}</option>
             </select>
-            Paired Account (only with certain types):
-            <select class="form-control" ng-model="catalog_form.paired_account_object_id">
-                <option ng-repeat="option in account_options" value="{{option._id}}">{{option.name}}</option>
-            </select>
+
+            <div ng-if="catalog_form.catalog_entry_type=='loan payment'">
+                Paired Account (only with certain types):
+                <select class="form-control"
+                        ng-model="catalog_form.paired_account_object_id">
+                    <option ng-repeat="option in account_options"
+                            value="{{option._id}}">{{option.name}}</option>
+                </select>
+            </div>
+
+            Amount:
+            <input type="number" class="form-control"
+                   ng-model="catalog_form.amount" required>
+
+            <div ng-if="catalog_form.catalog_entry_type!='fixed'">
+                Amount Calc: <input type="number" class="form-control" ng-model="catalog_form.amount_calc" step="0.001">
+            </div>
             Start Date: <input type="date" class="form-control" ng-model="catalog_form.start_date" required>
             End Date: <input type="date" class="form-control" ng-model="catalog_form.end_date" required>
-            Amount: <input type="number" class="form-control" ng-model="catalog_form.amount" required>
-            Amount Calc: <input type="number" class="form-control" ng-model="catalog_form.amount_calc" step="0.001">
-            
+
             <button ng-if="catalog_form.edit_mode==false" class="btn btn-primary" type="submit" ng-click="createCatalogEntry()">Create Catalog Entry<br />
             <button ng-if="catalog_form.edit_mode==true" class="btn btn-primary" type="submit" ng-click="updateCatalogEntry()">Update Catalog Entry<br />
         </form>
@@ -56,10 +73,10 @@
                 <td>{{u.start_date | date}}</td>
                 <td>
                     <button class="btn btn-info" 
-                    ng-click="editCatalog(u.catalog_entry_object_id)">Edit</button>
+                    ng-click="editCatalog(u._id)">Edit</button>
                 
                     <button class="btn btn-info"
-                    ng-click="deleteCatalogEntry(u.catalog_entry_object_id)">Delete
+                    ng-click="deleteCatalogEntry(u._id)">Delete
                     </button>
                 </td>
             </tbody>
