@@ -3,7 +3,7 @@
 var db = require('./DbConnection');
 var Catalog = require('./Catalog');
 var q = require('q');
-var verbose = 3;
+var verbose = 1;
 
 
 module.exports.updateCatalog = function(data) {
