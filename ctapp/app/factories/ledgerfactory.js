@@ -22,6 +22,7 @@ angular.module('fsApp.common.factories.Ledger',[
 
         service.getMonthEndBalances = function(account_id,start_date,end_date) {
             if (verbose>=2) console.log('LedgerFactory.getMonthEndBalances()');
+            var s=Date.now();
             var result = {
                 labels: [],
                 data: []
@@ -30,9 +31,10 @@ angular.module('fsApp.common.factories.Ledger',[
             var ledger = service.getJournalEntries(account_id);
 
             var i,j=1;
-            var previous_je_date = ledger[0].balance_date;
+            var previous_je_date = ledger[0].journal_entry_date;
             var previous_je_balance = ledger[0].balance;
             var current_je_date;
+            var current_je_balance;
             var current_month_end;
 
             if (ledger.length<2) {
@@ -41,24 +43,27 @@ angular.module('fsApp.common.factories.Ledger',[
                     result.data.push(previous_je_balance);
                 }
             } else {
-                for (i=0;i<month_end_dates.length;i++) {
-                    current_je_date = ledger[j].balance_date;
+                for (i=month_end_dates.length-1;i>=0;i--) {
                     current_month_end = month_end_dates[i];
-
-                    while (current_month_end<current_je_date) {
-                        previous_je_balance = ledger[j].balance;
-                        previous_je_date = ledger[j].balance_date;
-                        if (j<(ledger.length-1)) j++;
-                        current_je_date = ledger[j].balance_date;
+                    
+                    
+                    
+                    for(j=ledger.length-1;j>=0;j--) {
+                        current_je_date = ledger[j].journal_entry_date;
+                        
+                        if (current_je_date<=current_month_end) {
+                            current_je_balance = ledger[j].balance;
+                            
+                            result.labels.unshift(CalculationEngine.getYearMonthText(current_month_end));
+                            result.data.unshift(current_je_balance);        
+                            
+                            j=-1; //end search .. move on to next month
+                        }
                     }
-
-                    result.labels.push(CalculationEngine.getYearMonthText(current_month_end));
-                    result.data.push(ledger[j].balance);
-                    if (j<(ledger.length-1)) j++;
-
                 }
             }
-            if (verbose>=3) console.log('  result: '+JSON.stringify(result));
+            if (verbose>=3) console.log('  result: '+JSON.stringify(result) +
+            'in '+(Date.now()-s)+' ms');
             return result;
         };
         service.addAccount = function (form) {
@@ -159,26 +164,35 @@ angular.module('fsApp.common.factories.Ledger',[
 
             var new_journal_entry = {
                 journal_entry_id: next_journal_entry_id++,
-                journal_entry_date: journal_entry_date,
+                journal_entry_date: new Date(journal_entry_date),
                 schedule_entry_id: schedule_entry_id,
                 description: description,
                 amount: amount
             };
 
             var ledger = service.getJournalEntries(account_id);
-            var last_balance = 0.0;
-
-            if (ledger.length > 0) {
-                last_balance = ledger[ledger.length - 1].balance;
-            }
-            if (verbose>=3) console.log('Number(amount)='+Number(amount)+' last balance='+Number(last_balance));
-            new_journal_entry.balance = last_balance + Number(amount);
-
-            if (verbose>=3) console.log('  logging journal: '+JSON.stringify(new_journal_entry));
-
-            ledger.push(new_journal_entry);
-
-            return new_journal_entry.journal_entry_id;
+            if (verbose>=3) console.log('  account_id: '+account_id);
+            
+            
+                var last_balance = 0.0;
+    
+                if (ledger.length > 0) {
+                    last_balance = ledger[ledger.length - 1].balance;
+                }
+                if (verbose>=3) console.log('Number(amount)='+Number(amount)+' last balance='+Number(last_balance));
+                new_journal_entry.balance = last_balance + Number(amount);
+    
+                if (verbose>=3) console.log('  logging journal: '+JSON.stringify(new_journal_entry));
+                if (ledger.length>0) {
+                    if (verbose>=3) console.log ('  opening: '+ledger[0].journal_entry_date+' je: '+journal_entry_date);
+                    if  (ledger[0].journal_entry_date<=journal_entry_date)  {
+                        ledger.push(new_journal_entry);
+                    }
+                } else  {
+                    ledger.push(new_journal_entry);
+                }
+                return new_journal_entry.journal_entry_id;
+            
         };
         service.updateOpeningBalance = function(account_id,balance,balance_date) {
             if (verbose>=2) console.log('LedgerFactory.updateOpeningBalance()');

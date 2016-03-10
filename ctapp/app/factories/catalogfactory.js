@@ -49,7 +49,7 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
             }
 
             catalog_entries.push(new_catalog_entry);
-            console.log(' catalog_entries: '+JSON.stringify(catalog_entries));
+            if (verbose>=3) console.log(' catalog_entries: '+JSON.stringify(catalog_entries));
             ScheduleFactory.generateScheduleFromCatalog(new_catalog_entry);
 
             //
