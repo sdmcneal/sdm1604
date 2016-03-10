@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('fsApp.views.chart', ['fsApp.common.models'])
+angular.module('fsApp.views.chart', [
+    'fsApp.common.models',
+    'fsApp.common.factories.Profiler'])
 .factory('chartService', function($rootScope) {
     var service = {};
    
@@ -44,17 +46,19 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
     })
     
     .controller('ChartController', function ($scope,LedgerFactory,chartService,
-    CalculationEngine) {
+    CalculationEngine,ProfileFactory) {
         $scope.thelabels = ['Jan','Feb','Mar'];
         $scope.thedata= [100,200,150];
         $scope.time_scales = [];
          var verbose = 1;
-        
+        var profile_id;
+        var show_profile = true;
         
         init();
         
         
         $scope.setTheTimeScale = function(id) {
+            
             $scope.current_time_scale = id;
             $scope.time_scales.forEach(function(s) {
                 if (s.id==id) {
@@ -89,6 +93,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
         }
         $scope.drawLedger = function() {
             if (verbose>=2) console.log('drawLedger()');
+            profile_id = ProfileFactory.startTimer("drawLedger()");
             var accounts = LedgerFactory.getAccountList();
             
             accounts.forEach(function (a) {
@@ -97,6 +102,7 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
                 
                 chartService.addSeries(result.labels,{ name: a.name, data: result.data});
             });
+            if (show_profile) console.log(ProfileFactory.endTimer(profile_id));
             //$scope.chartOptions.series = [{ name: 'Account 2', data: [300,200,250]}];
             if (verbose>=3) console.log('chartOptions='+JSON.stringify($scope.chartOptions));
         };
@@ -108,7 +114,6 @@ angular.module('fsApp.views.chart', ['fsApp.common.models'])
             xAxis: {
                 categories: $scope.thelabels
             },
-
             series: []
         };
 
