@@ -4,6 +4,9 @@ angular.module('fsApp.common.models', [
     'fsApp.common.factories.Catalog',
     'fsApp.common.factories.Ledger'
 ])
+    .config(['$logProvider', function($logProvider){
+      $logProvider.debugEnabled(true);
+    }])
     .factory('CrumbFactory', function () {
         return {
             data: {
@@ -23,7 +26,7 @@ angular.module('fsApp.common.models', [
             }
         };
     })
-    .factory('ScheduleFactory', function (ConstantsFactory,CalculationEngine,LedgerFactory) {
+    .factory('ScheduleFactory', function ($log,ConstantsFactory,CalculationEngine,LedgerFactory) {
         var verbose = 1;
         var schedule_entries = [];
         var service = {};
@@ -146,6 +149,8 @@ angular.module('fsApp.common.models', [
             range_end_date = end_date;
         };
         service.saveFixedSchedule = function(schedule,catalog_entry) {
+          $log.debug('saveFixedSchedule()');
+          if (schedule) {          
             schedule.forEach(function (entry) {
 
 
@@ -154,17 +159,18 @@ angular.module('fsApp.common.models', [
                 //entry,catalog_entry.account_id,catalog_entry.paired_account_id,
                 //catalog_entry.amount,catalog_entry.amount_calc,catalog_entry.description);
             });
-
+          }
         };
         service.generateScheduleFromCatalog= function(catalog_entry) {
             var schedule;
-            if (verbose>=2) console.log("ScheduleFactory.generateScheduleFromCatalog()");
+            $log.debug("ScheduleFactory.generateScheduleFromCatalog()");
 
             switch(catalog_entry.frequency) {
                 case ConstantsFactory.FREQ_MONTHLY:
                     //TODO: calculate ledger date
 
-                    schedule = CalculationEngine.calculateMonthlyScheduleDate(catalog_entry.frequency_param,
+                    schedule = CalculationEngine.calculateMonthlyScheduleDate(
+                      catalog_entry.frequency_param,
                     catalog_entry.start_date,catalog_entry.end_date,new Date(2016,0,1));
 
                     break;
@@ -180,7 +186,15 @@ angular.module('fsApp.common.models', [
                     schedule = CalculationEngine.calculateFirstWeekdayOfMonths(
                     catalog_entry.start_date,catalog_entry.end_date,new Date(2016,0,1));
                     break;
-                    
+                case ConstantsFactory.FREQ_WEEKLY:
+                    schedule = CalculationEngine.calculateWeeklyScheduleDate(1,
+                    catalog_entry.start_date,catalog_entry.end_date,new Date(2016,0,1));
+                    break;
+                 case ConstantsFactory.FREQ_X_WEEKS:
+                    schedule = CalculationEngine.calculateWeeklyScheduleDate(
+                      catalog_entry.frequency_param,
+                    catalog_entry.start_date,catalog_entry.end_date,new Date(2016,0,1));
+                    break; 
 
             }
             switch(catalog_entry.catalog_entry_type) {
@@ -217,6 +231,7 @@ angular.module('fsApp.common.models', [
             constants.FREQ_LAST_DAY_OF_MONTH = "last day each month";
             constants.FREQ_LAST_WEEKDAY_OF_MONTH = "last weekday each month";
             constants.FREQ_WEEKLY = "weekly";
+            constants.FREQ_X_WEEKS = "x weeks";
 
             constants.FREQUENCY_LIST = [
                 constants.FREQ_MONTHLY,
@@ -224,19 +239,24 @@ angular.module('fsApp.common.models', [
                 constants.FREQ_FIRST_WEEKDAY_OF_MONTH,
                 constants.FREQ_LAST_DAY_OF_MONTH,
                 constants.FREQ_LAST_WEEKDAY_OF_MONTH,
-                constants.FREQ_WEEKLY
+                constants.FREQ_WEEKLY,
+                constants.FREQ_X_WEEKS
             ];
 
             constants.FIXED = "fixed";
             constants.TYPE_INTEREST_ON_BALANCE = "interest on balance";
             constants.TYPE_LOAN_PAYMENT = "loan payment";
             constants.TYPE_ESCALATING = "fixed escalating";
+            constants.TYPE_TRANSFER = "transfer";
+            constants.TYPE_BALANCE = "balance";
 
             constants.TYPE_LIST = [
                 constants.FIXED,
                 constants.TYPE_INTEREST_ON_BALANCE,
                 constants.TYPE_LOAN_PAYMENT,
-                constants.TYPE_ESCALATING
+                constants.TYPE_ESCALATING,
+                constants.TYPE_TRANSFER,
+                constants.TYPE_BALANCE
             ];
 
             constants.DEFAULT_RANGE_START = new Date(2016, 1, 1);
@@ -247,7 +267,7 @@ angular.module('fsApp.common.models', [
 
         return constants;
     })
-    .factory('CalculationEngine', function (ConstantsFactory) {
+    .factory('CalculationEngine', function ($log,ConstantsFactory) {
         var verbose = 1;
         var service = {};
 
@@ -311,7 +331,8 @@ angular.module('fsApp.common.models', [
         };
         service.calculateMonthlyScheduleDate = function (day_of_month, catalog_entry_start_date,
                                                          catalog_entry_end_date, ledger_balance_date) {
-            if (verbose>=2) console.log('CalculationEngine.calculateMonthlyScheduleDate()');
+                                                             
+        if (verbose>=2) console.log('CalculationEngine.calculateMonthlyScheduleDate()');
 
             var schedule_dates = [];
             var current_date;
@@ -348,6 +369,35 @@ angular.module('fsApp.common.models', [
                 }
 
             }
+            return schedule_dates;
+                                                           
+        };
+        service.calculateWeeklyScheduleDate = function (no_weeks, catalog_entry_start_date,
+                                                         catalog_entry_end_date, ledger_balance_date) {
+            $log.info('CalculationEngine.calculateWeeklyScheduleDate()');
+
+            var schedule_dates = [];
+            var current_date;
+
+            if (catalog_entry_end_date < ledger_balance_date) {
+                return null;
+            }
+            else {
+                
+                current_date = new Date(catalog_entry_start_date);
+                
+                schedule_dates.push(new Date(current_date));
+                current_date = service.addXWeeksTo(no_weeks, current_date);
+
+                var max_iterations = 20;
+                while ((max_iterations-- > 0) && (current_date <= catalog_entry_end_date)) {
+
+                    schedule_dates.push(new Date(current_date));
+                    current_date = service.addXWeeksTo(no_weeks, current_date);
+                }
+
+            }
+            $log.info('  return dates: '+JSON.stringify(schedule_dates));
             return schedule_dates;
 
         };

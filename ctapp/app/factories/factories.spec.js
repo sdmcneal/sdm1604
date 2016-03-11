@@ -6,6 +6,7 @@ xdescribe("fsApp.common.models::ScheduleFactory", function () {
     var ledger_factory;
     var catalog_factory;
     var schedule_factory;
+    var calculation_factory;
 
     beforeEach(inject(function ($injector) {
         //beforeEach(module('fsApp.common.models'));
@@ -99,13 +100,13 @@ xdescribe("fsApp.common.models::ScheduleFactory", function () {
 
     });
 
-
 });
 
 
-xdescribe("Common models", function () {
+describe("Common models", function () {
     beforeEach(function () {
         module('fsApp.common.models');
+        module('fsApp.common.factories.Ledger');
     });
 
     var constants_factory;
@@ -130,6 +131,29 @@ xdescribe("Common models", function () {
         
         expect(calculation_engine.getYearMonthText(date)).toEqual("Feb 2016");
     })
+    describe('calculateWeeklyScheduleDate()', function() {
+       var schedule, schedule3; 
+       
+       beforeAll(function() {
+        schedule = calculation_engine.calculateWeeklyScheduleDate(1,
+        new Date(2016,0,7),new Date(2016,0,29),new Date(2016,0,7));
+        
+        schedule3 = calculation_engine.calculateWeeklyScheduleDate(3,
+        new Date(2016,0,7),new Date(2016,2,29),new Date(2016,0,7));
+        
+       });
+       it('should return weekly schedule', function() {
+           expect(schedule.length).toEqual(4);
+           expect(schedule[0]).toEqual(new Date(2016,0,7));
+           expect(schedule[2]).toEqual(new Date(2016,0,21));
+       });
+       it('should return weekly schedule for 3 weeks', function() {
+           expect(schedule3.length).toEqual(4);
+           expect(schedule3[0]).toEqual(new Date(2016,0,7));
+           expect(schedule3[2]).toEqual(new Date(2016,1,18));
+       });
+       
+    });
     xdescribe("Date calculations", function () {
         it("should return first day in month", function () {
             var d1 = new Date(2016, 5, 5),
@@ -231,92 +255,5 @@ xdescribe("Common models", function () {
         });
 
     });
-    describe("schedule to ledger", function () {
-        var schedule_factory, ledger_factory, catalog_entry;
-        beforeEach(inject(function ($injector) {
-            schedule_factory = $injector.get('ScheduleFactory');
-            ledger_factory = $injector.get('LedgerFactory');
-            catalog_factory = $injector.get('CatalogFactory');
-
-        }));
-        it("factories defined", function () {
-            expect(schedule_factory).toBeDefined();
-            expect(ledger_factory).toBeDefined();
-        });
-        it("schedule fixed catalog entry and open balance", function () {
-            var account = ledger_factory.addAccount({
-                user_id: 5000,
-                name: "Checking", 
-                type: "Cash", 
-                balance: 1000.0, 
-                balance_date: new Date(2016, 1, 14)});
-            expect(account).toBeDefined();
-
-            var ledger = ledger_factory.getJournalEntries(account);
-            expect(ledger.length).toEqual(1);
-
-            var je = ledger[0];
-            expect(je.balance).toEqual(1000.0);
-
-            catalog_entry = {
-                frequency: constants_factory.FREQ_MONTHLY,
-                frequency_param: 15,
-                catalog_entry_type: constants_factory.FIXED,
-                catalog_entry_id: 1201,
-                amount: -76.0,
-                amount_calc: 0.0,
-                account_id: account,
-                description: 'first catalog entry',
-                start_date: new Date(2016, 1, 12),
-                end_date: new Date(2016, 6, 15)
-            };
-
-            catalog_factory.addCatalogEntry(catalog_entry);
-            expect(catalog_factory.getCatalogEntryCount()).toEqual(1);
-            var first_schedule_entry = schedule_factory.getScheduleEntries()[0];
-            expect(schedule_factory.getScheduleEntryCount()).toEqual(6);
-            expect(first_schedule_entry.amount).toEqual(-76.0);
-            console.log('sch[0]=' + JSON.stringify(first_schedule_entry));
-            var journal_entries = ledger_factory.getJournalEntries(account);
-            expect(journal_entries.length).toEqual(7);
-            console.log('je1=' + JSON.stringify(journal_entries[1]));
-            expect(journal_entries[1].amount).toEqual(-76.0);
-            expect(journal_entries[1].balance).toEqual(1000.0 - 76.0);
-        });
-        xit("schedule fixed catalog entry at end of month and open balance", function () {
-            var account = ledger_factory.addAccount("Checking", "Cash", 1000.0, new Date(2016, 1, 14));
-            expect(account).toBeDefined();
-
-            var ledger = ledger_factory.getJournalEntries(account);
-            expect(ledger.length).toEqual(1);
-
-            var je = ledger[0];
-            expect(je.balance).toEqual(1000.0);
-
-            catalog_entry = {
-                frequency: constants_factory.FREQ_LAST_WWEKDAY_OF_MONTH,
-                frequency_param: 0,
-                catalog_entry_type: constants_factory.FIXED,
-                catalog_entry_id: 1201,
-                amount: -76.0,
-                amount_calc: 0.0,
-                account_id: account,
-                description: 'first catalog entry',
-                start_date: new Date(2016, 1, 12),
-                end_date: new Date(2016, 6, 15)
-            };
-
-            catalog_factory.addCatalogEntry(catalog_entry);
-            expect(catalog_factory.getCatalogEntryCount()).toEqual(1);
-            var first_schedule_entry = schedule_factory.getScheduleEntries()[0];
-            expect(schedule_factory.getScheduleEntryCount()).toEqual(6);
-            expect(first_schedule_entry.amount).toEqual(-76.0);
-            //console.log('sch[0]='+JSON.stringify(first_schedule_entry));
-            var journal_entries = ledger_factory.getJournalEntries(account);
-            expect(journal_entries.length).toEqual(7);
-            //console.log('je1='+ JSON.stringify(journal_entries[1]));
-            expect(journal_entries[1].amount).toEqual(-76.0);
-            expect(journal_entries[1].balance).toEqual(1000.0 - 76.0);
-        });
-    });
+    
 });

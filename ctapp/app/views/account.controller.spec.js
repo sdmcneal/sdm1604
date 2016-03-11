@@ -1,4 +1,4 @@
-describe('AccountCtrl', function() {
+xdescribe('AccountCtrl', function() {
     beforeEach(function() {
         module('fsApp.views.ledger');
         module('fsApp.common.factories.Ledger');

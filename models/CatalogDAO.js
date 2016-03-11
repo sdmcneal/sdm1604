@@ -10,14 +10,14 @@ module.exports.updateCatalog = function(data) {
     if (verbose>=2) console.log('fsDAO.updateCatalog()');
     var deferred = q.defer();
 
-    Catalog.findOne({catalog_entry_id: data.catalog_entry_id}, function(err,doc) {
+    Catalog.findOne({_id: data._id}, function(err,doc) {
         if (err) {
             deferred.reject(err);
         } else {
 
-            doc.parent_catalog_entry_id = data.parent_catalog_entry_id;
-            doc.account_id = data.account_id;
-            doc.paired_account_id = data.paired_account_id;
+            //doc.parent_catalog_entry_id = data.parent_catalog_entry_id;
+            doc.account_object_id = data.account_object_id;
+            doc.paired_account_object_id = data.paired_account_object_id;
             doc.catalog_entry_type = data.catalog_entry_type;
             doc.description = data.description;
             doc.frequency = data.frequency;

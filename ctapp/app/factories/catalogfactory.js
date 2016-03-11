@@ -1,7 +1,11 @@
 'use strict';
 
 angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
-.factory('CatalogFactory', function (ScheduleFactory, ConstantsFactory, CalculationEngine) {
+
+.factory('CatalogFactory',function (
+  ScheduleFactory, 
+  ConstantsFactory, 
+  CalculationEngine) {
         var verbose = 1;
         var catalog_entries = [];
         var service = {};
@@ -52,28 +56,6 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
             if (verbose>=3) console.log(' catalog_entries: '+JSON.stringify(catalog_entries));
             ScheduleFactory.generateScheduleFromCatalog(new_catalog_entry);
 
-            //
-            // TODO: placeholder to test create schedule
-            //
-            //var schedule = CalculationEngine.calculateMonthlyScheduleDate(1, new Date(2016, 0, 12),
-            //  new Date(2100, 0, 1), new Date(2016, 1, 14));
-            //
-            //schedule = CalculationEngine.calculateLastDayOfMonths(new Date(2016, 0, 12),
-            //  new Date(2100, 0, 1), new Date(2016, 1, 14));
-            //
-            //schedule = CalculationEngine.calculateLastWeekdayOfMonths(new Date(2016, 0, 12),
-            //  new Date(2100, 0, 1), new Date(2016, 1, 14));
-
-            //schedule.forEach(function(d) {
-            //    d.setDate(d.getDate()-1);
-            //    console.log(d.toDateString());
-            //});
-            //
-            //console.log(JSON.stringify(schedule));
-
-            //ScheduleFactory.addScheduleEntry(new_catalog_entry.catalog_entry_id, new_catalog_entry.start_date,
-            //  account_id, amount, new_catalog_entry.amountamount_calc);
-
             return new_catalog_entry.catalog_entry_id;
         };
         service.updateCatalogEntry = function (form) {
@@ -122,4 +104,4 @@ angular.module('fsApp.common.factories.Catalog',['fsApp.common.models'])
         }
 
         return service;
-    })
+    });

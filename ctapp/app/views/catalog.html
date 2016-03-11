@@ -18,6 +18,12 @@
                 <input type="number" class="form-control"
                        ng-model="catalog_form.frequency_param" required>
             </div>
+            <div ng-if="catalog_form.frequency=='x weeks'">
+                Every x weeks:
+
+                <input type="number" class="form-control"
+                       ng-model="catalog_form.frequency_param" required>
+            </div>
             Account:
             <select class="form-control" ng-model="catalog_form.account_object_id">
                 <option ng-repeat="option in account_options" value="{{option._id}}">{{option.name}}</option>
