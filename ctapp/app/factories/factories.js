@@ -219,7 +219,7 @@ angular.module('fsApp.common.models', [
     };
     service.generateScheduleFromCatalog = function(catalog_entry) {
       var schedule;
-      $log.debug("ScheduleFactory.generateScheduleFromCatalog()");
+      if(verbose>=2) ("ScheduleFactory.generateScheduleFromCatalog()");
 
       switch (catalog_entry.frequency) {
         case ConstantsFactory.FREQ_MONTHLY:
@@ -316,6 +316,17 @@ angular.module('fsApp.common.models', [
         constants.TYPE_TRANSFER,
         constants.TYPE_BALANCE
       ];
+      
+      constants.ASSET_CLASS_CASH = "Cash Asset";
+      constants.ASSET_CLASS_ASSET = "Physical Asset";
+      constants.ASSET_CLASS_LIABILITY = "Liability";
+      
+      constants.ASSET_LIST = [
+        constants.ASSET_CLASS_ASSET,
+        constants.ASSET_CLASS_CASH,
+        constants.ASSET_CLASS_LIABILITY
+        ];
+      
 
       constants.DEFAULT_RANGE_START = new Date(2016, 1, 1);
       constants.DEFAULT_RANGE_END = new Date(2016, 7, 1);

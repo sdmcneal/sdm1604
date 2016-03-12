@@ -46,13 +46,15 @@ angular.module('fsApp.views.chart', [
     })
     
     .controller('ChartController', function ($scope,LedgerFactory,chartService,
-    CalculationEngine,ProfileFactory) {
+    CalculationEngine,ProfileFactory,ConstantsFactory) {
         $scope.thelabels = ['Jan','Feb','Mar'];
         $scope.thedata= [100,200,150];
         $scope.time_scales = [];
          var verbose = 1;
         var profile_id;
         var show_profile = true;
+        $scope.cash_assets = [];
+        $scope.labels = [];
         
         init();
         
@@ -91,6 +93,7 @@ angular.module('fsApp.views.chart', [
             
            // $scope.setTheTimeScale(2);
         }
+        
         $scope.drawLedger = function() {
             if (verbose>=2) console.log('drawLedger()');
             profile_id = ProfileFactory.startTimer("drawLedger()");
@@ -101,6 +104,11 @@ angular.module('fsApp.views.chart', [
                 $scope.start_date,$scope.end_date);
                 
                 chartService.addSeries(result.labels,{ name: a.name, data: result.data});
+                if (a.type==ConstantsFactory.ASSET_CLASS_CASH) {
+                    $scope.cash_assets.push({name: a.name, data: result.data});
+                    $scope.time_labels = result.labels;
+                }
+                
             });
             if (show_profile) console.log(ProfileFactory.endTimer(profile_id));
             //$scope.chartOptions.series = [{ name: 'Account 2', data: [300,200,250]}];

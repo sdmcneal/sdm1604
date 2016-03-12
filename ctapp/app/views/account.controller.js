@@ -2,8 +2,14 @@
 
 angular.module('fsApp.views.ledger',['fsApp.common.models'])
 
-.controller('AccountCtrl', function($scope,$http,$q,LedgerFactory,UserFactory) {
-   var verbose = 3;
+.controller('AccountCtrl', function(
+    $scope,
+    $http,
+    $q,
+    LedgerFactory,
+    UserFactory,
+    ConstantsFactory) {
+   var verbose = 1;
    
 
     init();
@@ -116,6 +122,9 @@ angular.module('fsApp.views.ledger',['fsApp.common.models'])
             }
         }
     };
+    $scope.getAccountTypes = function() {
+        return ConstantsFactory.ASSET_LIST;
+    }
 
 
 

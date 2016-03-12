@@ -12,4 +12,5 @@ app.controller('LedgerController', function($scope,LedgerFactory) {
     $scope.getLedger = function (account_id) {
         return LedgerFactory.getJournalEntries(account_id);
     }
+    $scope.account_list = LedgerFactory.getAccountList();
 });

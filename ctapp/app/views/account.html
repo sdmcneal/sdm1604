@@ -30,7 +30,11 @@
 
     <form novalidate class="form-group">
         Name: <input type="text" class="form-control" ng-model="account_form.name" required /><br />
-        Type: <input type="text" class="form-control" ng-model="account_form.type" required /><br />
+        
+        <select class="form-control" ng-model="account_form.type">
+                <option ng-repeat="option in getAccountTypes()" value="{{option}}">{{option}}</option>
+            </select>
+        
         Balance: <input  class="form-control" type="number" ng-model="account_form.balance" required /><br />
         Balance Date: <input  class="form-control" type="date" ng-model="account_form.balance_date" required /><br />
         <button class="btn btn-primary" type="submit" ng-click="createAccount()">

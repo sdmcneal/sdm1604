@@ -10,4 +10,22 @@
 
 <button class="btn btn-primary" ng-click="drawLedger()">Draw Ledger Chart</button>
 
+<h2>Cash Assets</h2>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <th>Account</th>
+            <th ng-repeat="h in time_labels">
+                {{h}}
+            </th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="a in cash_assets">
+                <td>{{a.name}}</td>
+                <td ng-repeat="d in a.data track by $index">{{d | currency}}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+</div>
 </div>
