@@ -120,7 +120,7 @@ app.controller('FSMainController', function($scope, $http, $q, UserFactory,
   };
   $scope.loadFromDatabase = function(user_id) {
     if (verbose >= 2) console.log('FSMainController.loadFromDatabase()');
-
+    var s = Date.now();
 
     $http.get('/api/getallaccounts/' + UserFactory.getCurrentUser())
       .then(function(account) {
@@ -128,6 +128,7 @@ app.controller('FSMainController', function($scope, $http, $q, UserFactory,
         $http.get('/api/getallcatalogentries/' + UserFactory.getCurrentUser())
           .then(function(catalog) {
             loadCatalogEntries(catalog);
+            console.log('load time (ms): '+(Date.now()-s));
           });
       });
 

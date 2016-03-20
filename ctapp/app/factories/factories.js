@@ -205,7 +205,7 @@ angular.module('fsApp.common.models', [
       range_end_date = end_date;
     };
     service.saveFixedSchedule = function(schedule, catalog_entry) {
-      $log.debug('saveFixedSchedule()');
+      if(verbose>=2) console.log('saveFixedSchedule()');
       if (schedule) {
         schedule.forEach(function(entry) {
 
@@ -219,7 +219,7 @@ angular.module('fsApp.common.models', [
     };
     service.generateScheduleFromCatalog = function(catalog_entry) {
       var schedule;
-      if(verbose>=2) ("ScheduleFactory.generateScheduleFromCatalog()");
+      if(verbose>=2) console.log("ScheduleFactory.generateScheduleFromCatalog()");
 
       switch (catalog_entry.frequency) {
         case ConstantsFactory.FREQ_MONTHLY:
@@ -329,7 +329,7 @@ angular.module('fsApp.common.models', [
       
 
       constants.DEFAULT_RANGE_START = new Date(2016, 1, 1);
-      constants.DEFAULT_RANGE_END = new Date(2016, 7, 1);
+      constants.DEFAULT_RANGE_END = new Date(2026, 7, 1);
 
       constants.OPENING_BALANCE = "Opening Balance";
     }
@@ -430,7 +430,7 @@ angular.module('fsApp.common.models', [
         schedule_dates.push(new Date(current_date));
         current_date = service.addXMonthsTo(1, current_date);
 
-        var max_iterations = 20;
+        var max_iterations = 1000;
         while ((max_iterations-- > 0) && (current_date <= catalog_entry_end_date)) {
 
           schedule_dates.push(new Date(current_date));
@@ -443,7 +443,7 @@ angular.module('fsApp.common.models', [
     };
     service.calculateWeeklyScheduleDate = function(no_weeks, catalog_entry_start_date,
       catalog_entry_end_date, ledger_balance_date) {
-      $log.info('CalculationEngine.calculateWeeklyScheduleDate()');
+      if (verbose >= 2) console.log('CalculationEngine.calculateWeeklyScheduleDate()');
 
       var schedule_dates = [];
       var current_date;
@@ -458,7 +458,7 @@ angular.module('fsApp.common.models', [
         schedule_dates.push(new Date(current_date));
         current_date = service.addXWeeksTo(no_weeks, current_date);
 
-        var max_iterations = 20;
+        var max_iterations = 1000;
         while ((max_iterations-- > 0) && (current_date <= catalog_entry_end_date)) {
 
           schedule_dates.push(new Date(current_date));
@@ -466,7 +466,7 @@ angular.module('fsApp.common.models', [
         }
 
       }
-      $log.info('  return dates: ' + JSON.stringify(schedule_dates));
+      if(verbose>=3) console.log('  return dates: ' + JSON.stringify(schedule_dates));
       return schedule_dates;
 
     };
@@ -532,6 +532,17 @@ angular.module('fsApp.common.models', [
       if (verbose >= 3) console.log('first weekday schedule: ' + JSON.stringify(new_schedule));
       return new_schedule;
     }
+    service.calculateLastDayOfYears = function(catalog_entry_start_date,
+      catalog_entry_end_date,ledger_balance_date) {
+        var dates = [];
+        var year;
+        
+        for(year=ledger_balance_date.getFullYear();year<=
+        catalog_entry_end_date.getFullYear();year++) {
+          dates.push(new Date(year,11,31));
+        }
+        return dates;
+      }
     return service;
   })
   .factory('UserFactory', function(ConstantsFactory) {

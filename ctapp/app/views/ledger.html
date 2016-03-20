@@ -1,9 +1,13 @@
 <div>
     <h1>Ledgers:</h1>
     <code>entry count = {{accounts.length}}</code>
-
-    <div ng-repeat="account in account_list">
-        <h2>Account: {{account.name}} </h2>
+    <form class="form-group">
+        <select class="form-control" ng-model="current_account">
+                <option ng-repeat="option in account_list" value="{{option._id}}">{{option.name}}</option>
+            </select>
+    </form>
+    <!--<div ng-repeat="account in account_list">-->
+    <!--    <h2>Account: {{account.name}} </h2>-->
         <div class="container">
             <table class="table table-striped">
                 <thead>
@@ -16,7 +20,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="u in getLedger(account._id)">
+                <tr ng-repeat="u in getLedger(current_account)">
                     <td>{{u.journal_entry_id}}</td>
                     <td>{{u.journal_entry_date | date}}</td>
                     <td>{{u.description}}</td>
@@ -25,5 +29,5 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    <!--</div>-->
 </div>

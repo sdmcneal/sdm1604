@@ -47,9 +47,54 @@ angular.module('fsApp.views.chart', [
             }
         };
     })
+    .factory('netChartService', function($rootScope) {
+    var service = {};
+   
+    
+    service.chart = '';
+    
+    service.setChart = function(chart) {
+        service.chart = chart;
+    }
+    service.addSeries = function (labels,series) {
+        service.chart.xAxis[0].setCategories(labels);
+        service.chart.addSeries(series);
+    }
+    return service;
+})
+    .directive('netHcChart', function (netChartService) {
+        return {
+            restrict: 'E',
+            template: '<div></div>',
+            scope: {
+                options: '='
+            },
+            link: function (scope, element) {
+                init();
+                
+                function init() {
+                    var defaultOptions = {
+                        chart: { 
+                            type: 'column',
+                            renderTo: element[0] 
+                        }
+                    };
+                    var config = angular.extend(defaultOptions,scope.options);
+                    netChartService.setChart( new Highcharts.chart(config) );
+                    
+                }
+                
+                scope.$watch("config.series", function(loading) {
+                    //console.log('watch()'+JSON.stringify(scope.options));
+                    //chart.addSeries({ name: 'Account 2', data: [300,200,250]});
+                });
+                
+            }
+        };
+    })
     
     .controller('ChartController', function ($scope,LedgerFactory,chartService,
-    CalculationEngine,ProfileFactory,ConstantsFactory) {
+    netChartService,CalculationEngine,ProfileFactory,ConstantsFactory) {
         $scope.thelabels = ['Jan','Feb','Mar'];
         $scope.thedata= [100,200,150];
         $scope.time_scales = [];
@@ -57,6 +102,7 @@ angular.module('fsApp.views.chart', [
         var profile_id;
         var show_profile = true;
         $scope.cash_assets = [];
+        $scope.all_accounts = [];
         $scope.labels = [];
         
         init();
@@ -103,9 +149,16 @@ angular.module('fsApp.views.chart', [
             var accounts = LedgerFactory.getAccountList();
             
             accounts.forEach(function (a) {
-                if (a.type==ConstantsFactory.ASSET_CLASS_CASH) {
-                    var result = LedgerFactory.getMonthEndBalances(a._id,
-                    $scope.start_date,$scope.end_date);
+                
+                    var result;
+                    if ($scope.current_time_scale<=2) {
+                        result = LedgerFactory.getMonthEndBalances(a._id,
+                        $scope.start_date,$scope.end_date);
+                    }
+                    if ($scope.current_time_scale==3) {
+                        result = LedgerFactory.getYearEndBalances(a._id,
+                        $scope.start_date,$scope.end_date);
+                    }
                 
                     // round and use thousands
                     var data_in_k = [];
@@ -113,12 +166,17 @@ angular.module('fsApp.views.chart', [
                         var t = Math.round(d / 100.0);
                         data_in_k.push(t/10.0);
                     });
-                    console.log(' data_in_k: '+JSON.stringify(data_in_k));
-                    chartService.addSeries(result.labels,{ name: a.name, data: data_in_k});
+                    if (verbose>=3) console.log(' data_in_k: '+JSON.stringify(data_in_k));
+                    if (a.type==ConstantsFactory.ASSET_CLASS_CASH) {
+                        chartService.addSeries(result.labels,{ name: a.name, data: data_in_k});
                 
-                    $scope.cash_assets.push({name: a.name, data: result.data});
+                        $scope.cash_assets.push({name: a.name, data: result.data});
+                    }
+                    netChartService.addSeries(result.labels,{ name: a.name, data: data_in_k});
+                    $scope.all_accounts.push({name: a.name, data: result.data});
+                    
                     $scope.time_labels = result.labels;
-                }
+                
                 
             });
             if (show_profile) console.log(ProfileFactory.endTimer(profile_id));

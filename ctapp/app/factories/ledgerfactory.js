@@ -20,6 +20,52 @@ angular.module('fsApp.common.factories.Ledger',[
             next_account_id = ConstantsFactory.FIRST_ACCOUNT_ID;
         }
 
+        service.getYearEndBalances = function(account_id,start_date,end_date) {
+            if (verbose>=2) console.log('LedgerFactory.getYearEndBalances()');
+            var s=Date.now();
+            var result = {
+                labels: [],
+                data: []
+            };
+            var month_end_dates = CalculationEngine.calculateLastDayOfYears(start_date,end_date,start_date);
+            var ledger = service.getJournalEntries(account_id);
+
+            var i,j=1;
+            var previous_je_date = ledger[0].journal_entry_date;
+            var previous_je_balance = ledger[0].balance;
+            var current_je_date;
+            var current_je_balance;
+            var current_month_end;
+
+            if (ledger.length<2) {
+                for (i=0;i<month_end_dates.length;i++) {
+                    result.labels.push(CalculationEngine.getYearMonthText(month_end_dates[i]));
+                    result.data.push(previous_je_balance);
+                }
+            } else {
+                for (i=month_end_dates.length-1;i>=0;i--) {
+                    current_month_end = month_end_dates[i];
+                    
+                    
+                    
+                    for(j=ledger.length-1;j>=0;j--) {
+                        current_je_date = ledger[j].journal_entry_date;
+                        
+                        if (current_je_date<=current_month_end) {
+                            current_je_balance = ledger[j].balance;
+                            
+                            result.labels.unshift(CalculationEngine.getYearMonthText(current_month_end));
+                            result.data.unshift(current_je_balance);        
+                            
+                            j=-1; //end search .. move on to next month
+                        }
+                    }
+                }
+            }
+            if (verbose>=3) console.log('  result: '+JSON.stringify(result) +
+            'in '+(Date.now()-s)+' ms');
+            return result;
+        };
         service.getMonthEndBalances = function(account_id,start_date,end_date) {
             if (verbose>=2) console.log('LedgerFactory.getMonthEndBalances()');
             var s=Date.now();
