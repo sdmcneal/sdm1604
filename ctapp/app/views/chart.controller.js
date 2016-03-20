@@ -30,7 +30,10 @@ angular.module('fsApp.views.chart', [
                 
                 function init() {
                     var defaultOptions = {
-                        chart: { renderTo: element[0] }
+                        chart: { 
+                            type: 'column',
+                            renderTo: element[0] 
+                        }
                     };
                     var config = angular.extend(defaultOptions,scope.options);
                     chartService.setChart( new Highcharts.chart(config) );
@@ -100,11 +103,19 @@ angular.module('fsApp.views.chart', [
             var accounts = LedgerFactory.getAccountList();
             
             accounts.forEach(function (a) {
-                var result = LedgerFactory.getMonthEndBalances(a._id,
-                $scope.start_date,$scope.end_date);
-                
-                chartService.addSeries(result.labels,{ name: a.name, data: result.data});
                 if (a.type==ConstantsFactory.ASSET_CLASS_CASH) {
+                    var result = LedgerFactory.getMonthEndBalances(a._id,
+                    $scope.start_date,$scope.end_date);
+                
+                    // round and use thousands
+                    var data_in_k = [];
+                    result.data.forEach(function(d) {
+                        var t = Math.round(d / 100.0);
+                        data_in_k.push(t/10.0);
+                    });
+                    console.log(' data_in_k: '+JSON.stringify(data_in_k));
+                    chartService.addSeries(result.labels,{ name: a.name, data: data_in_k});
+                
                     $scope.cash_assets.push({name: a.name, data: result.data});
                     $scope.time_labels = result.labels;
                 }
@@ -121,6 +132,30 @@ angular.module('fsApp.views.chart', [
             },
             xAxis: {
                 categories: $scope.thelabels
+            },
+            yAxis: {
+                title: {
+                    text: 'Total Balance'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                       enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black'
+                        }
+                    }
+                }
             },
             series: []
         };
