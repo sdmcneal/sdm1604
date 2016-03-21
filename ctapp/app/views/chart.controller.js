@@ -32,7 +32,11 @@ angular.module('fsApp.views.chart', [
                     var defaultOptions = {
                         chart: { 
                             type: 'column',
+                            animation: false,
                             renderTo: element[0] 
+                        },
+                        title: {
+                            text: 'Cash and Equity Summary'
                         }
                     };
                     var config = angular.extend(defaultOptions,scope.options);
@@ -76,7 +80,11 @@ angular.module('fsApp.views.chart', [
                     var defaultOptions = {
                         chart: { 
                             type: 'column',
+                            animation: false,
                             renderTo: element[0] 
+                        },
+                        title: {
+                            text: 'Net Worth Summary'
                         }
                     };
                     var config = angular.extend(defaultOptions,scope.options);
@@ -115,6 +123,7 @@ angular.module('fsApp.views.chart', [
                 if (s.id==id) {
                     $scope.start_date = s.start_date;
                     $scope.end_date = s.end_date;
+                    
                 }
             });
         };
@@ -142,6 +151,8 @@ angular.module('fsApp.views.chart', [
             
            // $scope.setTheTimeScale(2);
         }
+        
+        
         
         $scope.drawLedger = function() {
             if (verbose>=2) console.log('drawLedger()');
@@ -185,9 +196,7 @@ angular.module('fsApp.views.chart', [
         };
         // Sample options for first chart
         $scope.chartOptions = {
-            title: {
-                text: 'Forecast Summary'
-            },
+            
             xAxis: {
                 categories: $scope.thelabels
             },
@@ -206,6 +215,7 @@ angular.module('fsApp.views.chart', [
             plotOptions: {
                 column: {
                     stacking: 'normal',
+                    animation: false,
                     dataLabels: {
                        enabled: true,
                         color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
@@ -218,5 +228,8 @@ angular.module('fsApp.views.chart', [
             series: []
         };
 
-        
+        $scope.setTimeAndDraw = function(td) {
+            $scope.setTheTimeScale(td);
+            $scope.drawLedger();
+        }
     });
